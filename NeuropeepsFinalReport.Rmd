@@ -1,0 +1,51 @@
+---
+title: "Not Always A Matter Of Context: Preliminary data summaries"
+date: 2017-12-14
+author: Nicole LaGrange, Tania Delgado, Pamela Riviere
+output: html_document
+---
+
+####### __Paper.__ Buechner and Maier (2016) Not always a matter of context: direct effects of red on arousal but context-dependent moderations on valence. _PeerJ_
+
+####### __Summary.__ This study aimed to determine whether colors have an intrinsic ability to elicit different degrees of physiological arousal, or whether their perceptual effects are dictated by the contextual circumstances in which the colors are experienced. To investigate this question, Buechner and Maier (2016) sorted subjects into one of ___four experimental categories___. These categories consisted of assessing the arousal and valence properties of either:
+* four "test-relevant" pictures framed in red
+* four "test-relevant" pictures framed in blue
+* four "neutral" pictures framed in red
+* four "neutral" pictures framed in blue
+
+To assess arousal, participants in each category were asked: "Describe how physiologically arousing do you think [the situation in this picture] is". To assess valence, participants in each category were asked: "Describe how unpleasant do you think [the situation in this picture] is". In response to each question, participants assigned each picture a number from 1 (not at all) to 9 (extremely). 
+
+
+######## The dataframe contains rows of subjects with their corresponding assessement of a given picture as physically arousing or unpleasant (a measure of valence)
+
+```{r, warning=FALSE, message=FALSE}
+library(foreign)
+library(dplyr)
+library(tidyverse)
+
+color_data_pr = read.csv("color_data_pr.csv")
+```
+
+### Replicating Analyses and Figures
+######### TODO: Remember to include commentary as to why it's potentially weird to collapse across judgments for different pictures, include error bars, run anova stats, polish the names of axis labels, Scheffe post hoc
+
+```{r}
+ggplot(color_data_pr, aes(x=Condition, Pic_valence_MEAN)) +
+  geom_bar(stat="summary", fun.y="mean", position="dodge") + 
+  labs(title = 'Mean Picture Valence Across Conditions') + 
+  theme_minimal()
+
+ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
+  geom_bar(stat="summary", fun.y="mean", position="dodge") + 
+  labs(title = 'Mean Arousal Rating for Neutral v. Test Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Type') + 
+  theme_minimal()
+
+summary(aov(data=color_data_pr, Pic_arousal_MEAN ~ color*pic))
+
+ggplot(color_data_pr, aes(x=color, Pic_arousal_MEAN)) +
+  geom_bar(stat="summary", fun.y="mean", position="dodge") + 
+  labs(title = 'Mean Arousal Rating for Blue v. Red Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Color') + theme_minimal()
+```
+
+### Beyond the paper
+########## TODO: Run ANCOVA, using trait and test anxiety as the controls, figures we chose to improve, why are they improvements (violin plots here and why they are a nicer representation of the distribution)
