@@ -32,9 +32,29 @@ color_data_pr = read.csv("color_data_pr.csv")
 ######### TODO: Remember to include commentary as to why it's potentially weird to collapse across judgments for different pictures, include error bars, run anova stats, polish the names of axis labels, Scheffe post hoc
 
 ```{r}
+val.df <- color_data_pr
+val.df <- aggregate(val.df$Pic_valence_MEAN,
+                    by = list(condition = val.df$Condition),
+                    FUN = function(x) c(mean = mean(x), sd = sd(x),
+                                        n = length(x)))
+val.df <- do.call(data.frame, val.df)
+val.df$se <- val.df$x.sd / sqrt(val.df$x.n)
+
+limits = aes(ymax = val.df$x.mean + val.df$se,
+              ymin = val.df$x.mean - val.df$se)
+
 ggplot(color_data_pr, aes(x=Condition, Pic_valence_MEAN)) +
+  geom_bar(stat="summary", 
+           fun.ymin = "limits$ymin", 
+           fun.y="mean",
+           fun.ymax = 'limits$ymax',
+           position="dodge") + 
+  labs(title = 'Mean Picture Valence Across Conditions') +
+  theme_minimal()
+
+ggplot(color_data_pr, aes(x=Condition, Pic_arousal_MEAN)) +
   geom_bar(stat="summary", fun.y="mean", position="dodge") + 
-  labs(title = 'Mean Picture Valence Across Conditions') + 
+  labs(title = 'Mean Picture Arousal Across Conditions') + 
   theme_minimal()
 
 ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
@@ -58,6 +78,26 @@ ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) + geom_violin() 
 ### Violin Plot for Valence Mean
 ggplot(color_data_pr, aes(x=pic, Pic_valence_MEAN, fill=color)) + geom_violin() +   labs(title = 'Mean Valence Rating for Blue v. Red Pictures', y = 'Mean Picture Valence Rating', x = 'Picture Type') + theme_minimal()
 
+# bar or violin plots for the distribution of arousal and valence judgements for each picture
+arousal_by_pic = c(mean(color_data_pr$pic1_arousal), 
+                   mean(color_data_pr$pic2_arousal), 
+                   mean(color_data_pr$pic3_arousal), 
+                   mean(color_data_pr$pic4_arousal))
 
-```
+valence_by_pic = c(mean(color_data_pr$pic1_valence), mean(color_data_pr$pic2_valence), mean(color_data_pr$pic3_valence), mean(color_data_pr$pic4_valence))
+
+pics = c('pic1', 'pic2', 'pic3', 'pic4','pic1', 'pic2', 'pic3', 'pic4')
+new.df = data.frame(arousal_by_pic, valence_by_pic, pics)
+
+labels = c('arousal', 'arousal', 'arousal', 'arousal',
+           'valence', 'valence', 'valence', 'valence')
+
+ratings = c(arousal_by_pic, valence_by_pic)
+new.df2 = data.frame(ratings, pics, labels)
+
+ggplot(new.df2, aes(x=pics, ratings, fill=labels)) +
+  geom_bar(stat="identity", position="dodge") + 
+  labs(title = 'Mean Picture Arousal Across Pictures') + 
+  theme_minimal()
+
 
