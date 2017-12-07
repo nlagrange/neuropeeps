@@ -1,8 +1,10 @@
 ---
-title: "Not Always A Matter Of Context: Preliminary data summaries"
-date: 2017-12-14
-author: Nicole LaGrange, Tania Delgado, Pamela Riviere
-output: html_document
+title: 'Not Always A Matter Of Context: Preliminary data summaries'
+author: "Nicole LaGrange, Tania Delgado, Pamela Riviere"
+date: '2017-12-14'
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ####### __Paper.__ Buechner and Maier (2016) Not always a matter of context: direct effects of red on arousal but context-dependent moderations on valence. _PeerJ_
@@ -46,6 +48,16 @@ ggplot(color_data_pr, aes(x=color, Pic_arousal_MEAN)) +
   geom_bar(stat="summary", fun.y="mean", position="dodge") + 
   labs(title = 'Mean Arousal Rating for Blue v. Red Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Color') + theme_minimal()
 ```
-
+```{r}
 ### Beyond the paper
 ########## TODO: Run ANCOVA, using trait and test anxiety as the controls, figures we chose to improve, why are they improvements (violin plots here and why they are a nicer representation of the distribution)
+
+### Violin Plot for Arousal Mean
+ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) + geom_violin() +   labs(title = 'Mean Arousal Rating for Blue v. Red Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Type') + theme_minimal()
+
+### Violin Plot for Valence Mean
+ggplot(color_data_pr, aes(x=pic, Pic_valence_MEAN, fill=color)) + geom_violin() +   labs(title = 'Mean Valence Rating for Blue v. Red Pictures', y = 'Mean Picture Valence Rating', x = 'Picture Type') + theme_minimal()
+
+
+```
+
