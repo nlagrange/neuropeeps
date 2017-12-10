@@ -32,23 +32,12 @@ color_data_pr = read.csv("color_data_pr.csv")
 ######### TODO: Remember to include commentary as to why it's potentially weird to collapse across judgments for different pictures, include error bars, run anova stats, polish the names of axis labels, Scheffe post hoc
 
 ```{r}
-val.df <- color_data_pr
-val.df <- aggregate(val.df$Pic_valence_MEAN,
-                    by = list(condition = val.df$Condition),
-                    FUN = function(x) c(mean = mean(x), sd = sd(x),
-                                        n = length(x)))
-val.df <- do.call(data.frame, val.df)
-val.df$se <- val.df$x.sd / sqrt(val.df$x.n)
-
-limits = aes(ymax = val.df$x.mean + val.df$se,
-              ymin = val.df$x.mean - val.df$se)
-
 ggplot(color_data_pr, aes(x=Condition, Pic_valence_MEAN)) +
-  geom_bar(stat="summary", 
-           fun.ymin = "limits$ymin", 
-           fun.y="mean",
-           fun.ymax = 'limits$ymax',
-           position="dodge") + 
+  geom_bar(stat='summary', fun.y='mean') +
+  stat_summary(fun.y = function(x){mean(x)},
+               fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
+               fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
+               geom= 'pointrange') +
   labs(title = 'Mean Picture Valence Across Conditions') +
   theme_minimal()
 
@@ -100,4 +89,9 @@ ggplot(new.df2, aes(x=pics, ratings, fill=labels)) +
   labs(title = 'Mean Picture Arousal Across Pictures') + 
   theme_minimal()
 
+# try this for the error bars
+stat_summary (fun.y = function(x){mean(x)},
+                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
+                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
+                geom= 'pointrange')
 
