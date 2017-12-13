@@ -92,6 +92,7 @@ ggplot(color_data_pr, aes(x=color, Pic_arousal_MEAN)) +
 ```
 
 ```{r}
+ggplot(data = color_data_pr, aes(x=color, y=Pic_arousal_MEAN)) +
 geom_bar(stat="summary", fun.y="mean", position="dodge") +
   stat_summary(fun.y = function(x){mean(x)},
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
@@ -257,7 +258,6 @@ aro.red.test.avg = mean(c(mean(red.test$pic1_arousal),
 blue.neu = filter(simple.color.df, condition=='blue_neu')
 
 # blue/neutral valence ratings
-
 
 
 ```
