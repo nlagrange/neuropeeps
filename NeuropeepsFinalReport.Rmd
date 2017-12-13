@@ -97,6 +97,7 @@ stat_summary (fun.y = function(x){mean(x)},
                 geom= 'pointrange')
 ```
 
+__some ANOVAs.__ 
 ``` {r some anovas}
 
 #is this the right way to go about this? - tania
@@ -108,6 +109,7 @@ interact.aro = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ Condition*Pic_v
 
 ```
 
+__some ANCOVAs.__
 ``` {r some ancovas}
 
 #is this the right way to go about this? - tania
@@ -119,6 +121,7 @@ ancova.aro.trait_anxiety = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ AEQ
 
 ```
 
+__Tania messing around to understand the data.__
 ```{r Tania messing around with things to understand the data better, enter at your own risk}
 
 ## First let's create a simpler dataframe to work with
