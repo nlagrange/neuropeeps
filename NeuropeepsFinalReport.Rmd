@@ -100,12 +100,17 @@ stat_summary (fun.y = function(x){mean(x)},
 __some ANOVAs.__ 
 ``` {r some anovas}
 
-#is this the right way to go about this? - tania
+# Let's look at main and interaction effects
+interact.val = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ color*pic))
+interact.aro = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ color*pic))
+
+
+#is this a valid way to go about this? - tania
 anova.val.cond = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ Condition))
 anova.aro.cond = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ Condition))
 
-interact.val = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ Condition*Pic_arousal_MEAN))
-interact.aro = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ Condition*Pic_valence_MEAN))
+interact.val.cond = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ Condition*Pic_arousal_MEAN))
+interact.aro.cond = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ Condition*Pic_valence_MEAN))
 
 ```
 
@@ -113,15 +118,18 @@ __some ANCOVAs.__
 ``` {r some ancovas}
 
 #is this the right way to go about this? - tania
-ancova.val.test_anxiety = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ STAI_MEAN + Condition))
-ancova.val.trait_anxiety = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ AEQanxiety_MEAN + Condition))
 
-ancova.aro.test_anxiety = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ STAI_MEAN + Condition))
-ancova.aro.trait_anxiety = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ AEQanxiety_MEAN + Condition))
+# ANCOVA with valence rating as the response variable, trait or test anxiety as controls
+ancova.val.trait_anxiety = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ STAI_MEAN + Condition))
+ancova.val.test_anxiety = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ AEQanxiety_MEAN + Condition))
+
+# ANCOVA with arousal rating as the response variable, trait or test anxiety as controls
+ancova.aro.trait_anxiety = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ STAI_MEAN + Condition))
+ancova.aro.test_anxiety = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ AEQanxiety_MEAN + Condition))
 
 ```
 
-__Tania messing around to understand the data.__
+__Tania messing around to understand the data/feel free to ignore.__
 ```{r Tania messing around with things to understand the data better, enter at your own risk}
 
 ## First let's create a simpler dataframe to work with
