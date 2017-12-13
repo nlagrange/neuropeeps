@@ -18,7 +18,7 @@ output:
 To assess arousal, participants in each category were asked: "Describe how physiologically arousing do you think [the situation in this picture] is". To assess valence, participants in each category were asked: "Describe how unpleasant do you think [the situation in this picture] is". In response to each question, participants assigned each picture a number from 1 (not at all) to 9 (extremely). 
 
 
-######## The dataframe contains rows of subjects with their corresponding assessement of a given picture as physically arousing or unpleasant (a measure of valence)
+######## The dataframe contains rows of subjects with their corresponding assessement of a given picture as physically arousing or unpleasant (a measure of valence).
 
 ```{r, warning=FALSE, message=FALSE}
 library(foreign)
@@ -57,6 +57,7 @@ ggplot(color_data_pr, aes(x=color, Pic_arousal_MEAN)) +
   geom_bar(stat="summary", fun.y="mean", position="dodge") + 
   labs(title = 'Mean Arousal Rating for Blue v. Red Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Color') + theme_minimal()
 ```
+
 ```{r}
 ### Beyond the paper
 ########## TODO: Run ANCOVA, using trait and test anxiety as the controls, figures we chose to improve, why are they improvements (violin plots here and why they are a nicer representation of the distribution)
@@ -94,4 +95,116 @@ stat_summary (fun.y = function(x){mean(x)},
                 fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
                 fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
                 geom= 'pointrange')
+```
+
+``` {r some anovas}
+
+#is this the right way to go about this? - tania
+anova.val.cond = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ Condition))
+anova.aro.cond = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ Condition))
+
+interact.val = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ Condition*Pic_arousal_MEAN))
+interact.aro = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ Condition*Pic_valence_MEAN))
+
+```
+
+``` {r some ancovas}
+
+#is this the right way to go about this? - tania
+ancova.val.test_anxiety = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ STAI_MEAN + Condition))
+ancova.val.trait_anxiety = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ AEQanxiety_MEAN + Condition))
+
+ancova.aro.test_anxiety = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ STAI_MEAN + Condition))
+ancova.aro.trait_anxiety = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ AEQanxiety_MEAN + Condition))
+
+```
+
+```{r Tania messing around with things to understand the data better, enter at your own risk}
+
+## First let's create a simpler dataframe to work with
+
+simple.color.df <- data.frame(condition=color_data_pr$Condition,pic1_valence=color_data_pr$pic1_valence,pic2_valence=color_data_pr$pic2_valence,pic3_valence=color_data_pr$pic3_valence,pic4_valence=color_data_pr$pic4_valence,pic1_arousal=color_data_pr$pic1_arousal,pic2_arousal=color_data_pr$pic2_arousal,pic3_arousal=color_data_pr$pic3_arousal,pic4_arousal=color_data_pr$pic4_arousal,test.anxiety=color_data_pr$STAI_MEAN,trait.anxiety=color_data_pr$AEQanxiety_MEAN)
+
+## Let's look at the data by image and condition
+
+# Red and Neutral condition
+red.neu = filter(simple.color.df, condition=='red_neu')
+
+# Red/neutral valence ratings
+means.val.red.neu = c(mean(red.neu$pic1_valence),
+                     mean(red.neu$pic2_valence),
+                     mean(red.neu$pic3_valence),
+                     mean(red.neu$pic4_valence))
+
+pic1.val.mean.rn = means.val.red.neu[1]
+pic2.val.mean.rn = means.val.red.neu[2]
+pic3.val.mean.rn = means.val.red.neu[3]
+pic4.val.mean.rn = means.val.red.neu[4]
+
+val.red.neu.avg = mean(c(mean(red.neu$pic1_valence),
+                     mean(red.neu$pic2_valence),
+                     mean(red.neu$pic3_valence),
+                     mean(red.neu$pic4_valence)))
+
+# Red/neutral arousal ratings
+means.aro.red.neu = c(mean(red.neu$pic1_arousal),
+                     mean(red.neu$pic2_arousal),
+                     mean(red.neu$pic3_arousal),
+                     mean(red.neu$pic4_arousal))
+
+pic1.aro.mean.rn = means.aro.red.neu[1]
+pic2.aro.mean.rn = means.aro.red.neu[2]
+pic3.aro.mean.rn = means.aro.red.neu[3]
+pic4.aro.mean.rn = means.aro.red.neu[4]
+
+aro.red.neu.avg = mean(c(mean(red.neu$pic1_arousal),
+                     mean(red.neu$pic2_arousal),
+                     mean(red.neu$pic3_arousal),
+                     mean(red.neu$pic4_arousal)))
+
+# Red/test condition
+
+red.test = filter(simple.color.df, condition=='red_test')
+
+# Red/test valence ratings
+means.val.red.test = c(mean(red.test$pic1_valence),
+                     mean(red.test$pic2_valence),
+                     mean(red.test$pic3_valence),
+                     mean(red.test$pic4_valence))
+
+pic1.val.mean.rt = means.val.red.test[1]
+pic2.val.mean.rt = means.val.red.test[2]
+pic3.val.mean.rt = means.val.red.test[3]
+pic4.val.mean.rt = means.val.red.test[4]
+
+val.red.test.avg = mean(c(mean(red.test$pic1_valence),
+                     mean(red.test$pic2_valence),
+                     mean(red.test$pic3_valence),
+                     mean(red.test$pic4_valence)))
+
+# Red/test arousal ratings
+means.aro.red.test = c(mean(red.test$pic1_arousal),
+                     mean(red.test$pic2_arousal),
+                     mean(red.test$pic3_arousal),
+                     mean(red.test$pic4_arousal))
+
+pic1.aro.mean.rt = means.aro.red.test[1]
+pic2.aro.mean.rt = means.aro.red.test[2]
+pic3.aro.mean.rt = means.aro.red.test[3]
+pic4.aro.mean.rt = means.aro.red.test[4]
+
+aro.red.test.avg = mean(c(mean(red.test$pic1_arousal),
+                     mean(red.test$pic2_arousal),
+                     mean(red.test$pic3_arousal),
+                     mean(red.test$pic4_arousal)))
+
+# Blue/neutral condition
+blue.neu = filter(simple.color.df, condition=='blue_neu')
+
+# blue/neutral valence ratings
+
+
+
+```
+
 
