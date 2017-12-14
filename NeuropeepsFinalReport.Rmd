@@ -145,6 +145,7 @@ ggplot(color_data_pr, aes(x=pic, Pic_valence_MEAN, fill=color)) +
   theme_minimal()
 
 ```
+Insert text describing violin plots and what we can get from them. 
 
 __some ANOVAs.__ 
 ``` {r some anovas}
