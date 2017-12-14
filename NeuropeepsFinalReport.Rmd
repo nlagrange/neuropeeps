@@ -9,6 +9,7 @@ output:
 
 ####### __Paper.__ Buechner and Maier (2016) Not always a matter of context: direct effects of red on arousal but context-dependent moderations on valence. _PeerJ_
 
+
 ####### __Summary.__ This study aimed to determine whether colors intrinsically elicit different degrees of physiological arousal, or whether their perceptual effects are dictated by the contextual circumstances in which the colors are experienced. To investigate this question, Buechner and Maier (2016) sorted subjects into one of ___four experimental categories___. These categories consisted of assessing the arousal and valence properties of either:
 
 * four "test-relevant" pictures framed in red
@@ -18,12 +19,15 @@ output:
 
 To assess arousal, participants in each category were asked: "Describe how physiologically arousing do you think [the situation in this picture] is". To assess valence, participants in each category were asked: "Describe how unpleasant do you think [the situation in this picture] is". In response to each question, participants assigned each picture a number from 1 (not at all) to 9 (extremely). 
 
+
 ######## The dataframe contains rows of subjects with their corresponding assessement of a given picture as physically arousing or unpleasant (a measure of valence).
+
 
 ```{r, warning=FALSE, message=FALSE}
 library(foreign)
 library(dplyr)
 library(tidyverse)
+library(DescTools)
 
 color_data_pr = read.csv("color_data_pr.csv")
 ```
@@ -47,7 +51,12 @@ ggplot(color_data_pr, aes(x=Condition, Pic_valence_MEAN)) +
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
                geom= 'pointrange') +
-  labs(title = 'Mean Picture Valence Across Conditions', x = "Condition", y = "Mean Picture Valence") +
+  labs(title = 'Mean Picture Valence Across Conditions') +
+  theme_minimal()
+
+ggplot(color_data_pr, aes(x=Condition, Pic_arousal_MEAN)) +
+  geom_bar(stat="summary", fun.y="mean", position="dodge") + 
+  labs(title = 'Mean Picture Arousal Across Conditions') + 
   theme_minimal()
 
 ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
@@ -81,8 +90,8 @@ ggplot(color_data_pr, aes(x=color, Pic_arousal_MEAN)) +
 ```
 
 ```{r}
-ggplot(data = color_data_pr, aes(x=color, y=Pic_arousal_MEAN)) +
-geom_bar(stat="summary", fun.y="mean", position="dodge") +
+ggplot(data= color_data_pr, aes(x=color, y= Pic_arousal_MEAN)) + 
+  geom_bar(stat="summary", fun.y="mean", position="dodge") +
   stat_summary(fun.y = function(x){mean(x)},
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
@@ -247,6 +256,87 @@ aro.red.test.avg = mean(c(mean(red.test$pic1_arousal),
 blue.neu = filter(simple.color.df, condition=='blue_neu')
 
 # blue/neutral valence ratings
+
+
+
+
+
+
+```
+```{r}
+
+#recreate their anovas
+
+# ANOVA with color and context as between subjects factors for arousal ratings.
+# no significant interaction bewtween color and context on arousal ratings.
+interact.aro = summary(aov(data= color_data_pr, Pic_arousal_MEAN ~ pic * color))
+
+# for color
+interact.aro.color = summary(aov(data= color_data_pr, Pic_arousal_MEAN ~ pic * color))
+
+# for context
+interact.aro.pic = summary(aov(data= color_data_pr, Pic_arousal_MEAN ~ color * pic))
+
+# ANOVA with color and ocntest as between-subjects factors conducted on valence.
+interact.val = summary(aov(data= color_data_pr, Pic_valence_MEAN ~ pic * color))
+
+# for color
+interact.val.color = aov(data= color_data_pr, Pic_valence_MEAN ~ pic * color)
+        summary(interact.val.color)
+
+# for context
+interact.val.pic = summary(aov(data= color_data_pr, Pic_valence_MEAN ~ color * pic))
+
+
+
+
+
+#recreate their scheffe
+
+schef <- PostHocTest(x=interact.val.color, method="scheffe")
+
+
+
+
+
+
+
+# Nicole mucking about. Ingnore this.
+
+
+## this is unnecessary
+red <- color_data_pr %>% filter(color=='red')
+blue <- color_data_pr %>% filter(color=='blue')
+test <- color_data_pr %>% filter(pic=='test')
+neu <- color_data_pr %>% filter(pic=='neu')
+anova(red$Pic_arousal_MEAN, blue$Pic_arousal_MEAN)
+
+
+summary(aov(data= color_data_pr, Pic_arousal_MEAN ~ color*pic))
+#recreate their scheffe
+
+PostHocTest(x=col.con.anov, method="scheffe")
+
+summary(aov(data= color_data_pr, Pic_arousal_MEAN ~ pic))
+
+
+# Anova of picture arousal as a function of conditon controling for anxiety levels.
+anova(lm(data=color_data_pr, Pic_arousal_MEAN ~ AEQanxiety_MEAN + Condition))
+
+#interactions between sex and Anxiety for Arousal ratings
+anova(lm(data=color_data_pr, Pic_arousal_MEAN ~ AEQanxiety_MEAN * Condition))
+
+
+
+
+# There is an interaction between Condition and Anxiety
+
+color_data_pr %>% 
+  ggplot() +
+  aes(x = AEQanxiety_MEAN, color = Condition, group = Condition, y = Pic_arousal_MEAN) +
+  stat_summary(fun.y = mean, geom = "point") +
+  stat_summary(fun.y = mean, geom = "line")+ ggtitle('Condition and Anxiety Interaction')
+
 
 
 ```
