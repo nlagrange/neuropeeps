@@ -55,7 +55,8 @@ ggplot(color_data_pr, aes(x=color, Pic_arousal_MEAN)) +
 (interact.aro.pic = summary(aov(data= color_data_pr, Pic_arousal_MEAN ~ color * pic)))
 
 ```
-A __very__ subtle effect of color on mean arousal ratings. **Insert ANOVA** results.
+A __very__ subtle effect of __color__ on mean arousal ratings. F(1,301) = 4.34, p = 0.038 results.  
+There was also an effect of __context__ on mean arousal ratings. F(1,301) = 115.01, p < .001.
 
 ```{r}
 # Figure 2 recreated
