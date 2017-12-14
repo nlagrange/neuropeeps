@@ -1,5 +1,5 @@
 ---
-title: 'Not Always A Matter Of Context: Preliminary data summaries'
+title: 'Not Always A Matter Of Context: direct effects of red on arousal but context-dependent moderations on valence'
 author: "Nicole LaGrange, Tania Delgado, Pamela Riviere"
 date: '2017-12-14'
 output:
