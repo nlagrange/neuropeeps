@@ -9,7 +9,7 @@ output:
 
 ####### __Paper.__ Buechner and Maier (2016) Not always a matter of context: direct effects of red on arousal but context-dependent moderations on valence. _PeerJ_
 
-####### __Summary.__ This study aimed to determine whether colors intrinsically elicit different degrees of physiological arousal, or whether their perceptual effects are dictated by the contextual circumstances in which the colors are experienced. To investigate this question, Buechner and Maier (2016) sorted subjects into one of ___four experimental categories___. These categories consisted of assessing the arousal and valence properties of either:
+####### __Summary.__ This study aimed to determine whether colors intrinsically elicit different degrees of arousal, and whether their perceptual effects on valence are dictated by the contextual circumstances in which the colors are experienced. To investigate this question, Buechner and Maier (2016) sorted subjects into one of ___four experimental categories___. These categories consisted of assessing the arousal and valence properties of either:
 
 * four "test-relevant" pictures framed in red
 * four "test-relevant" pictures framed in blue
@@ -98,10 +98,24 @@ fig1.aro.pic <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill = pic)) 
   theme_minimal()
 fig1.aro.pic
 
+
+
+
 ```
 
 
 There was a strong effect of __context__ on mean arousal ratings __(F(1,301) = 115.01, p < .001)__. This result is mostly omitted in the article's discussion of results. They suggest that red is inherently more arousing than blue, without discussing the influence of context (for the arousal ratings specificaly). 
+
+We then ran an ANCOVA to look at the the main effect of color on arousal when context was acounted for.
+```{r, ancova}
+# ancova for arousal as a factor of color, acounting for influcence of context.
+
+anova(lm(data=color_data_pr, Pic_arousal_MEAN ~ pic + color))
+```
+This gave a smaler f-value, but the p-value remained the same (F(1,302) = 3.853, p = 0.038). 
+
+We can conlude that there is an effect of color on arousal, however it is not as strong as the effect of context on arousal.
+
 
 ```{r}
 # Figure 2 replicated
@@ -220,9 +234,10 @@ valence.violin
 ```
 Valence ratings were  larger in the test condition, which is to be expected since the test images were chosen from a database of rated images for their negative valence qualities.
 
+
+Investingating further, we decided to look at the arousal and valence reports for each picture individually. We split arousal and valence ratings by image, specifically by the order in the which the images appeared. Note that the figure displays ratings collapsed across conditions. We found that the first image participants see is on average rated higher in arousal compared to the next three images they see. As the authors did not report data by item in their dataframe, we are unable to see if there are any item-based effects in arousal. However, we decided to further investigate a potential confound of the first image being more arousing due to it being the first in the sequence by removing it from analysis. By removing the first picture, we can see if the author's results are still significant.
+
 ```{r extra}
-### Beyond the paper
-########## TODO: Run ANCOVA, using trait and test anxiety as the controls, figures we chose to improve, why are they improvements (violin plots here and why they are a nicer representation of the distribution)
 
 # bar plots for the distribution of arousal and valence judgements for each picture
 arousal_by_pic = c(mean(color_data_pr$pic1_arousal), 
@@ -248,7 +263,7 @@ arousal.across.pics <- ggplot(new.df2, aes(x=pics, ratings, fill=labels)) +
   theme_minimal()
 arousal.across.pics
 ```
-We split arousal and valence ratings by image, specifically by the order in the which the images appeared. Note that the figure displays ratings collapsed across conditions. We found that the first image participants see is on average rated higher in arousal compared to the next three images they see. As the authors did not report data by item in their dataframe, we are unable to see if there are any item-based effects in arousal. However, we decided to further investigate a potential confound of the first image being more arousing due to it being the first in the sequence by removing it from analysis. By removing the first picture, we can see if the author's results are still significant.
+
 
 
 ```{r continued}
@@ -265,6 +280,10 @@ new.aro.df$aro.mean <- apply(new.aro.df[,3:5], 1, mean)
 fig1.nopic1 <- ggplot(new.aro.df, aes(x=color, aro.mean, fill=color))+
   geom_bar(stat="summary", fun.y="mean", position="dodge")+ 
   scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1))+
+    stat_summary(fun.y = function(x){mean(x)},
+               fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
+               fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
+               geom= 'pointrange') +
   labs(title = 'Mean Arousal Rating for Blue v. Red Framing',
        y = 'Mean Arousal Rating',
        x = 'Frame Color')+ 
