@@ -33,14 +33,8 @@ color_data_pr = read.csv("color_data_pr.csv")
 
 ### Replicating Analyses and Figures
 
-######### TODO: Remember to include commentary as to why it's potentially weird to collapse across judgments for different pictures, include error bars, run anova stats, polish the names of axis labels, Scheffe post hoc
-
 ######### TODO: Remember to 
 * include commentary as to why it's potentially weird to collapse across judgments for different pictures
-* include error bars
-* run anova stats
-* polish the names of axis labels
-* Scheffe post hoc
 
 ```{r}
 # Figure 1 recreated 
@@ -54,8 +48,6 @@ ggplot(color_data_pr, aes(x=color, Pic_arousal_MEAN)) +
 
 # ANOVA with color and context as between subjects factors for arousal ratings.
 # no significant interaction bewtween color and context on arousal ratings.
-(interact.aro = summary(aov(data= color_data_pr, Pic_arousal_MEAN ~ pic * color)))
-
 # for color
 (interact.aro.color = summary(aov(data= color_data_pr, Pic_arousal_MEAN ~ pic * color)))
 
@@ -86,7 +78,21 @@ ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
                geom= 'pointrange', position = position_dodge(0.95)) +
   labs(x = "Condition", y = "Mean Picture Valence Rating", title = 'Mean Picture Valence Across Conditions') +
   theme_minimal()
+
+# ANOVA with color and ocntest as between-subjects factors conducted on valence.
+# for color
+interact.val.color = aov(data= color_data_pr, Pic_valence_MEAN ~ pic * color)
+summary(interact.val.color)
+
+# for context
+(interact.val.pic = summary(aov(data= color_data_pr, Pic_valence_MEAN ~ color * pic)))
 ```
+
+Test-relevant pics generally rated higher in valence (not rated as unpleasant) than neutral pictures (main effect of __context__: F(1,301) = 323.59, p < 0.001). And red pictures generally rated higher in valence than blue pictures (main effect of __color__: F(1,301) = 5.345, p = 0.02). The main effects were modulated by a significant two-way interaction between color and context (interaction: (F(1,301) = 4.12, p = 0.043))
+
+Note, the F-statistic for main effect of __context__ (F(1,301) = 323.59, p < 0.001).  slightly differs from the reported one (F(1,301) = 325.48, p < 0.001).
+
+Note, the F-statistic for main effect of __color__ (F(1,301) = 5.345, p = 0.02) slightly differs from the reported one (F(1,301) = 5.40, p = 0.02).
 
 
 ```{r}
@@ -299,15 +305,7 @@ blue.neu = filter(simple.color.df, condition=='blue_neu')
 
 
 
-# ANOVA with color and ocntest as between-subjects factors conducted on valence.
-interact.val = summary(aov(data= color_data_pr, Pic_valence_MEAN ~ pic * color))
 
-# for color
-interact.val.color = aov(data= color_data_pr, Pic_valence_MEAN ~ pic * color)
-summary(interact.val.color)
-
-# for context
-interact.val.pic = summary(aov(data= color_data_pr, Pic_valence_MEAN ~ color * pic))
 
 
 
