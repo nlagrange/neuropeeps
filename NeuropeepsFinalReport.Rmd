@@ -16,7 +16,9 @@ output:
 * four "neutral" pictures framed in red
 * four "neutral" pictures framed in blue
 
-To assess arousal, participants in each category were asked: "Describe how physiologically arousing do you think [the situation in this picture] is". To assess valence, participants in each category were asked: "Describe how unpleasant do you think [the situation in this picture] is". In response to each question, participants assigned each picture a number from 1 (not at all) to 9 (extremely). 
+To assess arousal, participants in each category were asked: "Describe how physiologically arousing do you think [the situation in this picture] is". To assess valence, participants in each category were asked: "Describe how unpleasant do you think [the situation in this picture] is". In response to each question, participants assigned each picture a number from 1 (not at all) to 9 (extremely). The authors then take the __mean__ of the __arousal__ and __valence ratings across the four pictures__ rated by a given participant.
+
+__Hypothesis.__ The color __red__ should increase arousal perceptions for both neutral and test-relevant picture contexts, but it should increase valence perceptions only for test-relevant pictures. 
 
 
 ######## The dataframe contains rows of subjects with their corresponding assessement of a given picture as physically arousing or unpleasant (a measure of valence).
@@ -33,11 +35,10 @@ color_data_pr = read.csv("color_data_pr.csv")
 
 ### Replicating Analyses and Figures
 
-######### TODO: Remember to 
-* include commentary as to why it's potentially weird to collapse across judgments for different pictures
+######### A note on the response variables used in this experiment: the four pictures presented to each participant contained figures that were matched for unpleasantness (valence) and arousal quality by "experts". However, it is not clear that this expert assessment guarantees uniform responses across the four different pictures (for instance, picture1 may have elicited an arousal rating of 2, whereas picture2 elicited an arousal rating of 7 -- taking the mean of these would not necessarily constitute a meaningful arousal assesment). So it might be wise to take the following results with this caveat in mind, even though we trust that authors invested time in norming their stimuli.   
 
 ```{r}
-# Figure 1 recreated 
+# Figure 1 replicated 
 fig1 <- ggplot(color_data_pr, aes(x=color, Pic_arousal_MEAN, fill = color)) +
   geom_bar(stat="summary", fun.y="mean", position="dodge") + 
   stat_summary(fun.y = function(x){mean(x)},
@@ -48,17 +49,19 @@ fig1 <- ggplot(color_data_pr, aes(x=color, Pic_arousal_MEAN, fill = color)) +
   labs(title = 'Figure 1: Mean Arousal Rating for Blue v. Red Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Color') + theme_minimal()
 fig1
 
-# ANOVA with color and context as between subjects factors for arousal ratings.
-# no significant interaction bewtween color and context on arousal ratings.
-# for color
+# ANOVA with color and context as between-subjects factors for arousal ratings.
+# no significant interaction between color and context on arousal ratings.
+
+# to get the reported effect of color
 (interact.aro.color = summary(aov(data= color_data_pr, Pic_arousal_MEAN ~ pic * color)))
 
-# for context
+# to get the reported effect of context (note: the variable "pic" indicates context, whether test-relevant or neutral picture)
 (interact.aro.pic = summary(aov(data= color_data_pr, Pic_arousal_MEAN ~ color * pic)))
 
 ```
-A __very__ subtle effect of __color__ on mean arousal ratings. F(1,301) = 4.34, p = 0.038 results.  
-There was also an effect of __context__ on mean arousal ratings. F(1,301) = 115.01, p < .001.
+A __very__ subtle effect of __color__ on mean arousal ratings __(F(1,301) = 4.34, p = 0.038)__. In the original paper, authors rescale their y-axis to visually enhance the difference in means. Additionally, we only obtain matching values for the reported F-statistics if we run two different ANOVAs, with different ordering of the predictors. However, the paper reports the results as though they were generated from the same analysis. Interestingly, the main effect of color happens to wash out when it is used to explain most of the variance in the model __(F(1,301) = 2.87, p = 0.0911)__. 
+
+There was also an effect of __context__ on mean arousal ratings __(F(1,301) = 115.01, p < .001)__. This is somewhat elided in the article's discussion of results, which renders the main finding of the paper confusing. 
 ```{r, test/neu plot}
 # New plot showing difference between test and neutral contexts
 
