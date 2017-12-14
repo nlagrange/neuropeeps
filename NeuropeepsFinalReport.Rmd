@@ -33,10 +33,13 @@ library(DescTools)
 color_data_pr = read.csv("color_data_pr.csv")
 ```
 
-### Replicating Analyses and Figures
+### Replicating and Improving on Analyses and Figures
+
 
 ######### A note on the response variables used in this experiment: the four pictures presented to each participant contained figures that were matched for unpleasantness (valence) and arousal quality by "experts". However, it is not clear that this expert assessment guarantees uniform responses across the four different pictures (for instance, picture1 may have elicited an arousal rating of 2, whereas picture2 elicited an arousal rating of 7 -- taking the mean of these would not necessarily constitute a meaningful arousal assesment). So it might be wise to take the following results with this caveat in mind, even though we trust that authors invested time in norming their stimuli.   
 
+### Arousal
+___Does color modulate arousal?  And, what is the influence of context?__
 ```{r}
 # Figure 1 replicated 
 fig1 <- ggplot(color_data_pr, aes(x=color, Pic_arousal_MEAN, fill = color)) +
@@ -64,7 +67,8 @@ fig1
 ```
 A __very__ subtle effect of __color__ on mean arousal ratings __(F(1,301) = 4.34, p = 0.038)__. In the original paper, authors rescale their y-axis to visually enhance the difference in means. Additionally, we only obtain matching values for the reported F-statistics if we run two different ANOVAs, with different ordering of the predictors. However, the paper reports the results as though they were generated from the same analysis. Interestingly, the main effect of color happens to wash out when it is used to explain most of the variance in the model __(F(1,301) = 2.87, p = 0.0911)__. 
 
-We then created violin plots in order to get a better sense of how the differences in mean arousal were distributed within each color and context condion.
+We then created violin plots in order to get a better sense of how the differences in mean arousal were distributed within each color and context condion.   
+We separate the arousal ratings based on image type and colour frame. On average, the content-matched negative images (test condition) were rated as more arousing compared to neutral valence images, regardless of colour framing. Furthermore, content-matched negative images were rated as more arousing when framed with red, compared to the same images framed with blue.
 ```{r,}
 ### Violin Plot for Arousal Mean
 arousal.violin <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color))+
@@ -116,7 +120,8 @@ This gave a smaler f-value, but the p-value remained the same (F(1,302) = 3.853,
 
 We can conlude that there is an effect of color on arousal, however it is not as strong as the effect of context on arousal.
 
-
+###Valence
+__Effects of color and context on valence ratings__
 ```{r}
 # Figure 2 replicated
 
@@ -146,6 +151,26 @@ fig2.pic <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
        title = 'Mean Picture Valence Across Conditions') +
   theme_minimal()
 fig2.pic
+```
+
+We chose illistrate the data with violin plots here instead of bar plots to better represent the distribution
+
+```{r}
+### Violin Plot for Valence Mean -- need to fix y-scale
+
+valence.violin <- ggplot(color_data_pr, aes(x=pic, Pic_valence_MEAN, fill=color)) + 
+  geom_violin() +   
+  stat_summary(fun.data = mean_se, 
+               geom = 'pointrange', 
+               color='black', 
+               position = position_dodge(.9))+
+  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1))+
+  labs(title = 'Mean Valence Rating for Blue v. Red Pictures', 
+       y = 'Mean Picture Valence Rating', 
+       x = 'Picture Type') + 
+  theme_minimal()
+valence.violin
+
 
 # ANOVA with color and context as between-subjects factors conducted on valence.
 
@@ -162,34 +187,33 @@ Test-relevant images were generally rated higher in valence (rated as unpleasant
 
 Note, the F-statistic for main effect of __context__ (F(1,301) = 323.59, p < 0.001).  slightly differs from the reported one (F(1,301) = 325.48, p < 0.001).
 
-Note, the F-statistic for main effect of __color__ (F(1,301) = 5.345, p = 0.02) slightly differs from the reported one (F(1,301) = 5.40, p = 0.02).
+Note, the F-statistic for main effect of __color__ (F(1,301) = 5.345, p = 0.02) slightly differs from the reported one (F(1,301) = 5.40, p = 0.02).  
 
-__Sheffe Post Hoc Test for multiple comparisons.__
-```{r, Sheffe}
-# scheffe Post Hoc Test Replication
-(schef <- PostHocTest(x=interact.val.color, method="scheffe"))
 
-```
-The authors chose to report the results for the comparison between the test:red interaction and the test:blue interaction __(diff 0.491, p = 0.0257)__, in order to support the claim that the color red enhances valence perceptions. This, by itself, does not seem to support that particular claim. It does suggest that there is a slight bias for individuals to perceive an affectively charged context as unpleasant if red is present, rather than blue. Another test may be to evaluate whether the test:blue - neu:blue comparison __(diff 1.805, p < 0.001)__ is significantly different from test:red - neu:red __(diff 2.263, p < 0.001)__.  
+In conlcustion, valence ratings were  larger in the test condition, which is to be expected since the test images were chosen from a database of rated images for their negative valence qualities.
+
+
+
+##__more graphs. are theese necessary?__
 ```{r}
 
-# Mean Arousal rating by colour, collapsed across image type
-arous.by.color <- ggplot(data= color_data_pr, aes(x=color, y= Pic_arousal_MEAN, fill=color)) + 
+# Mean Valence rating by colour, collapsed across image type
+arous.by.color <- ggplot(data= color_data_pr, aes(x=color, y= Pic_valence_MEAN, fill=color)) + 
   geom_bar(stat="summary", fun.y="mean", position="dodge") +
   scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) +
   stat_summary(fun.y = function(x){mean(x)},
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
                geom= 'pointrange') +
-  labs(title = 'Mean Arousal Rating for Blue v. Red Pictures', 
-       y = 'Mean Picture Arousal Rating', 
+  labs(title = 'Mean Valence Rating for Blue v. Red Pictures', 
+       y = 'Mean Picture Valence Rating', 
        x = 'Picture Color') + 
   theme_minimal()
 arous.by.color
 
 # one-way ANOVA of colour
 
-summary(aov(data = color_data_pr, Pic_arousal_MEAN ~ color))
+summary(aov(data = color_data_pr, Pic_valence_MEAN ~ color))
 ```
 
 ```{r}
@@ -210,34 +234,23 @@ arous.neu.vs.test <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=col
 arous.neu.vs.test
 
 ```
-Here, we separate the arousal ratings based on image type and colour frame. On average, the content-matched negative images (test condition) were rated as more arousing compared to neutral valence images, regardless of colour framing. Furthermore, content-matched negative images were rated as more arousing when framed with red, compared to the same images framed with blue.
 
-  
-```{r}
-### Beyond the paper
-########## TODO: Run ANCOVA, using trait and test anxiety as the controls, figures we chose to improve, why are they improvements (violin plots here and why they are a nicer representation of the distribution)
+### Post Hoc Test
+__Sheffe Post Hoc Test for multiple comparisons.__
+```{r, Sheffe}
+# scheffe Post Hoc Test Replication
+(schef <- PostHocTest(x=interact.val.color, method="scheffe"))
 
-### Violin Plot for Valence Mean -- need to fix y-scale
-
-valence.violin <- ggplot(color_data_pr, aes(x=pic, Pic_valence_MEAN, fill=color)) + 
-  geom_violin() +   
-  stat_summary(fun.data = mean_se, 
-               geom = 'pointrange', 
-               color='black', 
-               position = position_dodge(.9))+
-  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1))+
-  labs(title = 'Mean Valence Rating for Blue v. Red Pictures', 
-       y = 'Mean Picture Valence Rating', 
-       x = 'Picture Type') + 
-  theme_minimal()
-valence.violin
 ```
-Valence ratings were  larger in the test condition, which is to be expected since the test images were chosen from a database of rated images for their negative valence qualities.
+The authors chose to report the results for the comparison between the test:red interaction and the test:blue interaction __(diff 0.491, p = 0.0257)__, in order to support the claim that the color red enhances valence perceptions. This, by itself, does not seem to support that particular claim. It does suggest that there is a slight bias for individuals to perceive an affectively charged context as unpleasant if red is present, rather than blue. Another test may be to evaluate whether the test:blue - neu:blue comparison __(diff 1.805, p < 0.001)__ is significantly different from test:red - neu:red __(diff 2.263, p < 0.001)__.  
 
 
-Investingating further, we decided to look at the arousal and valence reports for each picture individually. We split arousal and valence ratings by image, specifically by the order in the which the images appeared. Note that the figure displays ratings collapsed across conditions. We found that the first image participants see is on average rated higher in arousal compared to the next three images they see. As the authors did not report data by item in their dataframe, we are unable to see if there are any item-based effects in arousal. However, we decided to further investigate a potential confound of the first image being more arousing due to it being the first in the sequence by removing it from analysis. By removing the first picture, we can see if the author's results are still significant.
+### Further Investigation of the Stimuli
+__Order Effects__
+Investingating further, we decided to look at the arousal and valence reports for each picture individually. We split arousal and valence ratings by image, specifically by the order in the which the images appeared. Note that the figure displays ratings collapsed across conditions. 
 
-```{r extra}
+```{r, accounting for effects of first image}
+### Odering effects of images.
 
 # bar plots for the distribution of arousal and valence judgements for each picture
 arousal_by_pic = c(mean(color_data_pr$pic1_arousal), 
@@ -264,11 +277,13 @@ arousal.across.pics <- ggplot(new.df2, aes(x=pics, ratings, fill=labels)) +
 arousal.across.pics
 ```
 
+We found that the first image participants see is on average rated higher in arousal compared to the next three images they see. As the authors did not report data by item in their dataframe, we are unable to see if there are any item-based effects in arousal.   
 
+However, we decided to further investigate a potential confound of the first image being more arousing due to it being the first in the sequence by removing it from analysis. By removing the first picture, we can see if the author's results are still significant.
 
 ```{r continued}
 
-# create new,simple dataframe and compure arousal means by subject (without pic1)
+# create new, simple dataframe and compure arousal means by subject (without pic1)
 new.aro.df <- data.frame(color=color_data_pr$color,
                       pic=color_data_pr$pic,
                       pic2_aro=color_data_pr$pic2_arousal,
@@ -298,7 +313,9 @@ interact.new.aro.col
 ```
 Even after removing the data collected from first picture ratings, we find that arousal ratings are still higher for red framed pictures. We re-ran the ANOVAS and found a main effect of context (F(1,301) = 125, p < 0.001) and a main effect of colour (F(1,301) = 4.06, p = 0.0447). There was no significant interaction of colour and context.
 
-__some ANCOVAs.__
+
+### Potential Confounds from Subject Anxiety
+__Effects of Test Anxiety and General Anxiety on Arousal and Valence Ratings__
 ``` {r some ancovas}
 
 # ANCOVA with valence rating as the response variable, trait anxiety as control
