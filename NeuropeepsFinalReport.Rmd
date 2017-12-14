@@ -71,8 +71,8 @@ fig.pic <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill = pic)) +
   stat_summary(fun.y = function(x){mean(x)},
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
-               geom= 'pointrange') +
-  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) +
+               geom= 'pointrange',) +
+  scale_fill_manual(values = alpha(c("forestgreen", "darkorange"), 1)) +
   labs(title = 'Figure: Mean Arousal Rating for Test v. Neutral Images',
        y = 'Mean Arousal Rating',
        x = 'Image Type')+ 
@@ -102,6 +102,7 @@ fig2
 # Recreated version: 
 ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
   geom_bar(stat="summary", fun.y="mean", position="dodge") + 
+  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) +
   stat_summary(fun.y = function(x){mean(x)},
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
@@ -136,6 +137,7 @@ The authors chose to report the results for the comparison between the test:red 
 arous.neu.vs.test <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
   geom_bar(stat="summary", fun.y="mean", position="dodge", width = 0.5) + 
   scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1))+
+  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) +
   stat_summary(fun.y = function(x){mean(x)},
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
@@ -201,6 +203,7 @@ new.df2 = data.frame(ratings, pics, labels)
 
 arousal.across.pics <- ggplot(new.df2, aes(x=pics, ratings, fill=labels)) +
   geom_bar(stat="identity", position="dodge") +
+  scale_fill_manual(values = alpha(c("purple", "pink"), 1))+
  labs(title = 'Mean Picture Arousal Across Pictures') + 
   theme_minimal()
 arousal.across.pics
