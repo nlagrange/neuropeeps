@@ -319,20 +319,47 @@ __Effects of Test Anxiety and General Anxiety on Arousal and Valence Ratings__
 ``` {r some ancovas}
 
 # ANCOVA with valence rating as the response variable, trait anxiety as control
-ancova.val.trait_anxiety = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ STAI_MEAN + Condition))
-ancova.val.trait_anxiety
+
+ancova.val.trait_anxiety1 = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ STAI_MEAN + color*pic))
+ancova.val.trait_anxiety1
+
+ancova.val.trait_anxiety2 = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ STAI_MEAN + pic*color))
+ancova.val.trait_anxiety2
 
 # ANCOVA with valence rating as the response variable, test anxiety as control
-ancova.val.test_anxiety = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ AEQanxiety_MEAN + Condition))
-ancova.val.test_anxiety
+
+ancova.val.test_anxiety1 = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ AEQanxiety_MEAN + color*pic))
+ancova.val.test_anxiety1 
+
+ancova.val.test_anxiety2 = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ AEQanxiety_MEAN + pic*color))
+ancova.val.test_anxiety2 
 
 # ANCOVA with arousal rating as the response variable, trait anxiety as control
-ancova.aro.trait_anxiety = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ STAI_MEAN + Condition))
-ancova.aro.trait_anxiety
+
+ancova.aro.trait_anxiety1 = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ STAI_MEAN + color*pic))
+ancova.aro.trait_anxiety1
+
+ancova.aro.trait_anxiety2 = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ STAI_MEAN + pic*color))
+ancova.aro.trait_anxiety2
 
 # ANCOVA with arousal rating as the response variable, test anxiety as control
-ancova.aro.test_anxiety = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ AEQanxiety_MEAN + Condition))
-ancova.aro.test_anxiety
+
+ancova.aro.test_anxiety1 = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ AEQanxiety_MEAN + color*pic))
+ancova.aro.test_anxiety1
+
+ancova.aro.test_anxiety2 = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ AEQanxiety_MEAN + pic*color))
+ancova.aro.test_anxiety2
+
+#talk here and update rmd after nicole: A two-way ANCOVA was conducted with valence ratings as the response variable and colour and context as predictors, whilst controlling for trait anxiety. There was a significant difference in valence rating with context added to the model (F(1,298)=367.25, p < 0.001). When colour was added to the model with trait anxiety controlled, there was a significant main effect (F(1,298)=4.8684, p = 0.028115). There was an interaction effect of colour and context (F(1,298)= 4.7427, p = 0.030206).
+
+# A two-way ANCOVA was conducted with valence ratings as the response variable and colour and context as predictors, whilst controlling for test anxiety. There was a significant difference in valence rating with context added to the model (F(1,300)=355.78, p < 0.001). When colour was added to the model with test anxiety controlled, there was no longer a significant main effect for colour (F(1,300)=2.0191, p = 0.15637). There was no interaction effect of colour and context (F(1,300)= 3.1719, p = 0.07593). 
+# 
+# A two-way ANCOVA was conducted with arousal ratings as the response variable and colour and context as predictors, whilst controlling for trait anxiety. There was a significant difference in valence rating with context added to the model (F(1,298)=126.766, p < 0.001). When colour was added to the model with trait anxiety controlled, there was a significant main effect (F(1,298)=3.3886, p = 0.06664). There was no interaction effect of colour and context (F(1,298) = 1.5045, p =0.220951).
+# 
+# A two-way ANCOVA was conducted with arousal ratings as the response variable and colour and context as predictors, whilst controlling for test anxiety. There was a significant difference in valence rating with context added to the model (F(1,300)=128.69, p < 0.001). When colour was added to the model with trait anxiety controlled, there was a significant main effect (F(1,300)=1.3319, p = 0.2494). There was no interaction effect of colour and context (F(1,300) = 0.5575, p = 0.4559). 
+
+# The authors state that they performed supplementary analyses controlling for both trait and test anxiety,and that the tests showed that anxiety did not substantially moderate the interaction
+# effect on valence reported above. We confirmed this for trait anxiety, but not for test anxiety. They did not report the results of an ANCOVA of arousal ratings with anxiety as a covariate.  
 
 # Plot: interaction between Condition and Trait anxiety
 anxiety.interaction <- color_data_pr %>% 
