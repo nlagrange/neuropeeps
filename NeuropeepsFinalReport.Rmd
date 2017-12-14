@@ -46,7 +46,10 @@ fig1 <- ggplot(color_data_pr, aes(x=color, Pic_arousal_MEAN, fill = color)) +
                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
                geom= 'pointrange') +
   scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1))+
-  labs(title = 'Figure 1: Mean Arousal Rating for Blue v. Red Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Color') + theme_minimal()
+  labs(title = 'Figure 1: Mean Arousal Rating for Blue v. Red Pictures', 
+       y = 'Mean Picture Arousal Rating', 
+       x = 'Picture Color') + 
+  theme_minimal()
 fig1
 
 # ANOVA with color and context as between-subjects factors for arousal ratings.
@@ -61,24 +64,29 @@ fig1
 ```
 A __very__ subtle effect of __color__ on mean arousal ratings __(F(1,301) = 4.34, p = 0.038)__. In the original paper, authors rescale their y-axis to visually enhance the difference in means. Additionally, we only obtain matching values for the reported F-statistics if we run two different ANOVAs, with different ordering of the predictors. However, the paper reports the results as though they were generated from the same analysis. Interestingly, the main effect of color happens to wash out when it is used to explain most of the variance in the model __(F(1,301) = 2.87, p = 0.0911)__. 
 
-We then created violin plots in oder to get a better sense of how the differences in mean arousal were distributed within each color and context condion.
+We then created violin plots in order to get a better sense of how the differences in mean arousal were distributed within each color and context condion.
 ```{r,}
 ### Violin Plot for Arousal Mean
-arousal.violin <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +geom_violin() +
+arousal.violin <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color))+
+  geom_violin() +
   stat_summary(fun.data = mean_se, geom = 'pointrange', color='black', position = position_dodge(.9)) +
-   scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1))+
-  labs(title = 'Mean Arousal Rating for Blue v. Red Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Type') + theme_minimal()
+  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1))+
+  labs(title = 'Mean Arousal Rating for Neutral vs Test Images', 
+       y = 'Mean Arousal Rating', 
+       x = 'Image Type') + 
+  theme_minimal()
 arousal.violin
+
 ```
-Visually, it looks as thought the larger difference in arousal mean is within the test condition. We decided to further investigate the influence of context on arousal.  
+Visually, it looks as thought the larger difference in arousal mean is within the test condition.  Next, we decided to further investigate the influence of context on arousal.  
 
 
 We confirmed that the test condition is rated more arousing than the neutral condition.
 ```{r, test/neu plot}
 # New plot showing difference between test and neutral contexts
 
-# Similar to Fig 1, but with test vs neu
-fig.pic <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill = pic)) +
+# Similar to Fig 1, but with test vs neu on arousal
+fig1.aro.pic <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill = pic)) +
   geom_bar(stat="summary", fun.y="mean", position="dodge") + 
   stat_summary(fun.y = function(x){mean(x)},
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
@@ -88,49 +96,55 @@ fig.pic <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill = pic)) +
        y = 'Mean Arousal Rating',
        x = 'Image Type')+ 
   theme_minimal()
-fig.pic
-
+fig1.aro.pic
 
 ```
 
 
-There was a strong effect of __context__ on mean arousal ratings __(F(1,301) = 115.01, p < .001)__. This is somewhat eluded in the article's discussion of results. They suggest that red is inherently more arousing than blue, without discussing the influence of context (for the arousal ratings specificaly). 
+There was a strong effect of __context__ on mean arousal ratings __(F(1,301) = 115.01, p < .001)__. This result is mostly omitted in the article's discussion of results. They suggest that red is inherently more arousing than blue, without discussing the influence of context (for the arousal ratings specificaly). 
 
 ```{r}
 # Figure 2 replicated
 
-fig2 <- ggplot(color_data_pr, aes(x=Condition, Pic_valence_MEAN, fill = Condition)) +
+fig2.color <- ggplot(color_data_pr, aes(x=Condition, Pic_valence_MEAN, fill = Condition)) +
   geom_bar(stat='summary', fun.y='mean') +
   stat_summary(fun.y = function(x){mean(x)},
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
                geom= 'pointrange') +
   scale_fill_manual(values = alpha(c("deepskyblue", "deepskyblue", "indianred", "indianred"), 1)) +
-  labs(title = 'Figure 2: Mean Picture Valence Across Conditions', y = "Mean Picture Valence Rating", x = "Condition") +
+  labs(title = 'Figure 2: Mean Picture Valence Across Conditions', 
+       y = "Mean Valence Rating", 
+       x = "Condition") +
   theme_minimal()
-fig2
+fig2.color
 
-# Recreated version: 
-ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
+# Figure 2, grouped by image type rather than colour 
+fig2.pic <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
   geom_bar(stat="summary", fun.y="mean", position="dodge") + 
   scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) +
   stat_summary(fun.y = function(x){mean(x)},
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
                geom= 'pointrange', position = position_dodge(0.95)) +
-  labs(x = "Condition", y = "Mean Picture Valence Rating", title = 'Mean Picture Valence Across Conditions') +
+  labs(x = "Condition", 
+       y = "Mean Picture Valence Rating", 
+       title = 'Mean Picture Valence Across Conditions') +
   theme_minimal()
+fig2.pic
 
-# ANOVA with color and ocntest as between-subjects factors conducted on valence.
+# ANOVA with color and context as between-subjects factors conducted on valence.
+
 # for color
 interact.val.color = aov(data= color_data_pr, Pic_valence_MEAN ~ pic * color)
 summary(interact.val.color)
 
 # for context
 (interact.val.pic = summary(aov(data= color_data_pr, Pic_valence_MEAN ~ color * pic)))
+
 ```
 
-Test-relevant pics generally rated higher in valence (not rated as unpleasant) than neutral pictures (main effect of __context__: F(1,301) = 323.59, p < 0.001). And red pictures generally rated higher in valence than blue pictures (main effect of __color__: F(1,301) = 5.345, p = 0.02). The main effects were modulated by a significant two-way interaction between color and context (interaction: (F(1,301) = 4.12, p = 0.043))
+Test-relevant images were generally rated higher in valence (rated as unpleasant) than neutral pictures (main effect of __context__: F(1,301) = 323.59, p < 0.001). And red pictures generally rated higher in valence than blue pictures (main effect of __color__: F(1,301) = 5.345, p = 0.02). The main effects were modulated by a significant two-way interaction between color and context (interaction: (F(1,301) = 4.12, p = 0.043))
 
 Note, the F-statistic for main effect of __context__ (F(1,301) = 323.59, p < 0.001).  slightly differs from the reported one (F(1,301) = 325.48, p < 0.001).
 
@@ -145,22 +159,7 @@ __Sheffe Post Hoc Test for multiple comparisons.__
 The authors chose to report the results for the comparison between the test:red interaction and the test:blue interaction __(diff 0.491, p = 0.0257)__, in order to support the claim that the color red enhances valence perceptions. This, by itself, does not seem to support that particular claim. It does suggest that there is a slight bias for individuals to perceive an affectively charged context as unpleasant if red is present, rather than blue. Another test may be to evaluate whether the test:blue - neu:blue comparison __(diff 1.805, p < 0.001)__ is significantly different from test:red - neu:red __(diff 2.263, p < 0.001)__.  
 ```{r}
 
-arous.neu.vs.test <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
-  geom_bar(stat="summary", fun.y="mean", position="dodge", width = 0.5) + 
-  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1))+
-  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) +
-  stat_summary(fun.y = function(x){mean(x)},
-               fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
-               fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
-               geom= 'pointrange', position = position_dodge(0.5)) +
-  labs(title = 'Mean Arousal Rating for Neutral v. Test Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Type') + 
-  theme_minimal()
-arous.neu.vs.test
-
-
-```
-
-```{r}
+# Mean Arousal rating by colour, collapsed across image type
 arous.by.color <- ggplot(data= color_data_pr, aes(x=color, y= Pic_arousal_MEAN, fill=color)) + 
   geom_bar(stat="summary", fun.y="mean", position="dodge") +
   scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) +
@@ -168,26 +167,62 @@ arous.by.color <- ggplot(data= color_data_pr, aes(x=color, y= Pic_arousal_MEAN, 
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
                geom= 'pointrange') +
-  labs(title = 'Mean Arousal Rating for Blue v. Red Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Color') + theme_minimal()
+  labs(title = 'Mean Arousal Rating for Blue v. Red Pictures', 
+       y = 'Mean Picture Arousal Rating', 
+       x = 'Picture Color') + 
+  theme_minimal()
 arous.by.color
+
+# one-way ANOVA of colour
 
 summary(aov(data = color_data_pr, Pic_arousal_MEAN ~ color))
 ```
+
+```{r}
+
+# Similar to Figure 2: arousal ratings grouped by image type  
+
+arous.neu.vs.test <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
+  geom_bar(stat="summary", fun.y="mean", position="dodge", width = 0.5) + 
+  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1))+
+  stat_summary(fun.y = function(x){mean(x)},
+               fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
+               fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
+               geom= 'pointrange', position = position_dodge(0.5)) +
+  labs(title = 'Mean Arousal Rating for Neutral v. Test Pictures', 
+       y = 'Mean Picture Arousal Rating', 
+       x = 'Picture Type') + 
+  theme_minimal()
+arous.neu.vs.test
+
+```
+Here, we separate the arousal ratings based on image type and colour frame. On average, the content-matched negative images (test condition) were rated as more arousing compared to neutral valence images, regardless of colour framing. Furthermore, content-matched negative images were rated as more arousing when framed with red, compared to the same images framed with blue.
+
   
 ```{r}
 ### Beyond the paper
 ########## TODO: Run ANCOVA, using trait and test anxiety as the controls, figures we chose to improve, why are they improvements (violin plots here and why they are a nicer representation of the distribution)
 
+### Violin Plot for Valence Mean -- need to fix y-scale
 
-
-
-         
-### Violin Plot for Valence Mean
-valence.violin <- ggplot(color_data_pr, aes(x=pic, Pic_valence_MEAN, fill=color)) + geom_violin() +   stat_summary(fun.data = mean_se, geom = 'pointrange', color='black', position = position_dodge(.9))+
-   scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1))+labs(title = 'Mean Valence Rating for Blue v. Red Pictures', y = 'Mean Picture Valence Rating', x = 'Picture Type') + theme_minimal()
+valence.violin <- ggplot(color_data_pr, aes(x=pic, Pic_valence_MEAN, fill=color)) + 
+  geom_violin() +   
+  stat_summary(fun.data = mean_se, 
+               geom = 'pointrange', 
+               color='black', 
+               position = position_dodge(.9))+
+  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1))+
+  labs(title = 'Mean Valence Rating for Blue v. Red Pictures', 
+       y = 'Mean Picture Valence Rating', 
+       x = 'Picture Type') + 
+  theme_minimal()
 valence.violin
+```
+Valence ratings were  larger in the test condition, which is to be expected since the test images were chosen from a database of rated images for their negative valence qualities.
 
-
+```{r extra}
+### Beyond the paper
+########## TODO: Run ANCOVA, using trait and test anxiety as the controls, figures we chose to improve, why are they improvements (violin plots here and why they are a nicer representation of the distribution)
 
 # bar plots for the distribution of arousal and valence judgements for each picture
 arousal_by_pic = c(mean(color_data_pr$pic1_arousal), 
@@ -203,7 +238,6 @@ new.df = data.frame(arousal_by_pic, valence_by_pic, pics)
 labels = c('arousal', 'arousal', 'arousal', 'arousal',
            'valence', 'valence', 'valence', 'valence')
 
-
 ratings = c(arousal_by_pic, valence_by_pic)
 new.df2 = data.frame(ratings, pics, labels)
 
@@ -213,80 +247,63 @@ arousal.across.pics <- ggplot(new.df2, aes(x=pics, ratings, fill=labels)) +
  labs(title = 'Mean Picture Arousal Across Pictures') + 
   theme_minimal()
 arousal.across.pics
+```
+We split arousal and valence ratings by image, specifically by the order in the which the images appeared. Note that the figure displays ratings collapsed across conditions. We found that the first image participants see is on average rated higher in arousal compared to the next three images they see. As the authors did not report data by item in their dataframe, we are unable to see if there are any item-based effects in arousal. However, we decided to further investigate a potential confound of the first image being more arousing due to it being the first in the sequence by removing it from analysis. By removing the first picture, we can see if the author's results are still significant.
 
 
+```{r continued}
 
-  
-# Without Pic 1
+# create new,simple dataframe and compure arousal means by subject (without pic1)
 new.aro.df <- data.frame(color=color_data_pr$color,
                       pic=color_data_pr$pic,
                       pic2_aro=color_data_pr$pic2_arousal,
                       pic3_aro=color_data_pr$pic3_arousal,
                       pic4_aro=color_data_pr$pic4_arousal)
-
 new.aro.df$aro.mean <- apply(new.aro.df[,3:5], 1, mean)
-interact.new.aro.pic = anova(lm(data = new.aro.df, aro.mean ~ color*pic))
-interact.new.aro.col = anova(lm(data = new.aro.df, aro.mean ~ pic*color))
 
-fig.1.nopic1 <- ggplot(new.aro.df, aes(x=color, aro.mean, fill=color))+
+# Like Figure 1, but without data from "Pic1" included
+fig1.nopic1 <- ggplot(new.aro.df, aes(x=color, aro.mean, fill=color))+
   geom_bar(stat="summary", fun.y="mean", position="dodge")+ 
   scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1))+
   labs(title = 'Mean Arousal Rating for Blue v. Red Framing',
        y = 'Mean Arousal Rating',
        x = 'Frame Color')+ 
   theme_minimal()
-fig.1.nopic1
+fig1.nopic1
+
+interact.new.aro.pic = anova(lm(data = new.aro.df, aro.mean ~ color*pic))
+interact.new.aro.pic
+
+interact.new.aro.col = anova(lm(data = new.aro.df, aro.mean ~ pic*color))
+interact.new.aro.col
 ```
-
-__some ANOVAs.__ 
-``` {r some anovas}
-
-# Let's look at main and interaction effects
-interact.val = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ color*pic))
-interact.aro = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ color*pic))
-
-
-#is this a valid way to go about this? - tania
-anova.val.cond = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ Condition))
-anova.aro.cond = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ Condition))
-
-interact.val.cond = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ Condition*Pic_arousal_MEAN))
-interact.aro.cond = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ Condition*Pic_valence_MEAN))
-```
+Even after removing the data collected from first picture ratings, we find that arousal ratings are still higher for red framed pictures. We re-ran the ANOVAS and found a main effect of context (F(1,301) = 125, p < 0.001) and a main effect of colour (F(1,301) = 4.06, p = 0.0447). There was no significant interaction of colour and context.
 
 __some ANCOVAs.__
 ``` {r some ancovas}
 
-#is this the right way to go about this? - tania
-
-# ANCOVA with valence rating as the response variable, trait or test anxiety as controls
+# ANCOVA with valence rating as the response variable, trait anxiety as control
 ancova.val.trait_anxiety = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ STAI_MEAN + Condition))
+ancova.val.trait_anxiety
+
+# ANCOVA with valence rating as the response variable, test anxiety as control
 ancova.val.test_anxiety = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ AEQanxiety_MEAN + Condition))
+ancova.val.test_anxiety
 
-# ANCOVA with arousal rating as the response variable, trait or test anxiety as controls
+# ANCOVA with arousal rating as the response variable, trait anxiety as control
 ancova.aro.trait_anxiety = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ STAI_MEAN + Condition))
+ancova.aro.trait_anxiety
+
+# ANCOVA with arousal rating as the response variable, test anxiety as control
 ancova.aro.test_anxiety = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ AEQanxiety_MEAN + Condition))
+ancova.aro.test_anxiety
 
-```
-
-```{r}
-
-
-
-
-
-
-# There is an interaction between Condition and Anxiety
-
+# Plot: interaction between Condition and Trait anxiety
 anxiety.interaction <- color_data_pr %>% 
   ggplot() +
   aes(x = AEQanxiety_MEAN, color = Condition, group = Condition, y = Pic_arousal_MEAN) +
   stat_summary(fun.y = mean, geom = "point") +
   stat_summary(fun.y = mean, geom = "line")+ ggtitle('Condition and Anxiety Interaction')
-
 anxiety.interaction
 
-
 ```
-
-
