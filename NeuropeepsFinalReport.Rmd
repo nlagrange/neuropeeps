@@ -44,6 +44,7 @@ ggplot(color_data_pr, aes(x=color, Pic_arousal_MEAN)) +
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
                geom= 'pointrange') +
+  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) +
   labs(title = 'Figure 1: Mean Arousal Rating for Blue v. Red Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Color') + theme_minimal()
 
 # ANOVA with color and context as between subjects factors for arousal ratings.
@@ -55,8 +56,8 @@ ggplot(color_data_pr, aes(x=color, Pic_arousal_MEAN)) +
 (interact.aro.pic = summary(aov(data= color_data_pr, Pic_arousal_MEAN ~ color * pic)))
 
 ```
-A __very__ subtle effect of __color__ on mean arousal ratings. F(1,301) = 4.34, p = 0.038 results.  
-There was also an effect of __context__ on mean arousal ratings. F(1,301) = 115.01, p < .001.
+A __very__ subtle effect of __color__ on mean arousal ratings (F(1,301) = 4.34, p = 0.038).  
+There was also an effect of __context__ on mean arousal ratings (F(1,301) = 115.01, p < .001).
 
 ```{r}
 # Figure 2 recreated
@@ -67,6 +68,7 @@ ggplot(color_data_pr, aes(x=Condition, Pic_valence_MEAN)) +
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
                geom= 'pointrange') +
+  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) +
   labs(title = 'Figure 1: Mean Picture Valence Across Conditions', y = "Mean Picture Valence Rating", x = "Condition") +
   theme_minimal()
 
@@ -77,6 +79,7 @@ ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
                geom= 'pointrange', position = position_dodge(0.95)) +
+  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) +
   labs(x = "Condition", y = "Mean Picture Valence Rating", title = 'Mean Picture Valence Across Conditions') +
   theme_minimal()
 
@@ -98,20 +101,13 @@ Note, the F-statistic for main effect of __color__ (F(1,301) = 5.345, p = 0.02) 
 
 ```{r}
 
-
-ggplot(color_data_pr, aes(x=Condition, Pic_arousal_MEAN)) +
-  geom_bar(stat="summary", fun.y="mean", position="dodge") + 
-  labs(title = 'Mean Picture Arousal Across Conditions') + 
-  theme_minimal()
-
-
-
 ggplot(color_data_pr, aes(x=Condition, Pic_arousal_MEAN)) +
   geom_bar(stat="summary", fun.y="mean", position="dodge") +
   stat_summary(fun.y = function(x){mean(x)},
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
                geom= 'pointrange') +
+  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) +
   labs(x = "Condition", y = "Mean Picture Arousal Rating", title = 'Mean Picture Arousal Across Conditions') + 
   theme_minimal()
 
@@ -125,31 +121,28 @@ ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
   theme_minimal()
 
 
-
-
 ```
 
-```{r}
-ggplot(data= color_data_pr, aes(x=color, y= Pic_arousal_MEAN)) + 
-  geom_bar(stat="summary", fun.y="mean", position="dodge") +
-  stat_summary(fun.y = function(x){mean(x)},
-               fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
-               fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
-               geom= 'pointrange') +
-  labs(title = 'Mean Arousal Rating for Blue v. Red Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Color') + theme_minimal()
-
-summary(aov(data = color_data_pr, Pic_arousal_MEAN ~ color))
-```
   
 ```{r}
 ### Beyond the paper
 ########## TODO: Run ANCOVA, using trait and test anxiety as the controls, figures we chose to improve, why are they improvements (violin plots here and why they are a nicer representation of the distribution)
 
 ### Violin Plot for Arousal Mean
-ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) + geom_violin() +   labs(title = 'Mean Arousal Rating for Blue v. Red Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Type') + theme_minimal()
+ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) + 
+  geom_violin() +   
+  labs(title = 'Mean Arousal Rating for Blue v. Red Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Type') + 
+  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) + 
+  stat_summary(fun.data = mean_se, geom = 'pointrange', color='black', size = 0.2, position = position_dodge(.9)) +
+  theme_minimal()
 
 ### Violin Plot for Valence Mean
-ggplot(color_data_pr, aes(x=pic, Pic_valence_MEAN, fill=color)) + geom_violin() +   labs(title = 'Mean Valence Rating for Blue v. Red Pictures', y = 'Mean Picture Valence Rating', x = 'Picture Type') + theme_minimal()
+ggplot(color_data_pr, aes(x=pic, Pic_valence_MEAN, fill=color)) + 
+  geom_violin() +   
+  labs(title = 'Mean Valence Rating for Blue v. Red Pictures', y = 'Mean Picture Valence Rating', x = 'Picture Type') + 
+  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) + 
+  stat_summary(fun.data = mean_se, geom = 'pointrange', color='black', size = 0.2, position = position_dodge(.9)) +
+  theme_minimal()
 
 # bar or violin plots for the distribution of arousal and valence judgements for each picture
 arousal_by_pic = c(mean(color_data_pr$pic1_arousal), 
