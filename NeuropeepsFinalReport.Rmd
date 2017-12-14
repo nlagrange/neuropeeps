@@ -61,7 +61,19 @@ fig1
 ```
 A __very__ subtle effect of __color__ on mean arousal ratings __(F(1,301) = 4.34, p = 0.038)__. In the original paper, authors rescale their y-axis to visually enhance the difference in means. Additionally, we only obtain matching values for the reported F-statistics if we run two different ANOVAs, with different ordering of the predictors. However, the paper reports the results as though they were generated from the same analysis. Interestingly, the main effect of color happens to wash out when it is used to explain most of the variance in the model __(F(1,301) = 2.87, p = 0.0911)__. 
 
-There was also an effect of __context__ on mean arousal ratings __(F(1,301) = 115.01, p < .001)__. This is somewhat elided in the article's discussion of results, which renders the main finding of the paper confusing. 
+We then created violin plots in oder to get a better sense of how the differences in mean arousal were distributed within each color and context condion.
+```{r,}
+### Violin Plot for Arousal Mean
+arousal.violin <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +geom_violin() +
+  stat_summary(fun.data = mean_se, geom = 'pointrange', color='black', position = position_dodge(.9)) +
+   scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1))+
+  labs(title = 'Mean Arousal Rating for Blue v. Red Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Type') + theme_minimal()
+arousal.violin
+```
+Visually, it looks as thought the larger difference in arousal mean is within the test condition. We decided to further investigate the influence of context on arousal.  
+
+
+We confirmed that the test condition is rated more arousing than the neutral condition.
 ```{r, test/neu plot}
 # New plot showing difference between test and neutral contexts
 
@@ -70,8 +82,7 @@ fig.pic <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill = pic)) +
   geom_bar(stat="summary", fun.y="mean", position="dodge") + 
   stat_summary(fun.y = function(x){mean(x)},
                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
-               fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
-               geom= 'pointrange',) +
+               fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))}, geom= 'pointrange') +
   scale_fill_manual(values = alpha(c("forestgreen", "darkorange"), 1)) +
   labs(title = 'Figure: Mean Arousal Rating for Test v. Neutral Images',
        y = 'Mean Arousal Rating',
@@ -83,7 +94,7 @@ fig.pic
 ```
 
 
-
+There was a strong effect of __context__ on mean arousal ratings __(F(1,301) = 115.01, p < .001)__. This is somewhat eluded in the article's discussion of results. They suggest that red is inherently more arousing than blue, without discussing the influence of context (for the arousal ratings specificaly). 
 
 ```{r}
 # Figure 2 replicated
@@ -167,12 +178,7 @@ summary(aov(data = color_data_pr, Pic_arousal_MEAN ~ color))
 ### Beyond the paper
 ########## TODO: Run ANCOVA, using trait and test anxiety as the controls, figures we chose to improve, why are they improvements (violin plots here and why they are a nicer representation of the distribution)
 
-### Violin Plot for Arousal Mean
-arousal.violin <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +geom_violin() +
-  stat_summary(fun.data = mean_se, geom = 'pointrange', color='black', position = position_dodge(.9)) +
-   scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1))+
-  labs(title = 'Mean Arousal Rating for Blue v. Red Pictures', y = 'Mean Picture Arousal Rating', x = 'Picture Type') + theme_minimal()
-arousal.violin
+
 
 
          
