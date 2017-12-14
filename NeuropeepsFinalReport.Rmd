@@ -138,19 +138,7 @@ fig2.color <- ggplot(color_data_pr, aes(x=Condition, Pic_valence_MEAN, fill = Co
   theme_minimal()
 fig2.color
 
-# Figure 2, grouped by image type rather than colour 
-fig2.pic <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
-  geom_bar(stat="summary", fun.y="mean", position="dodge") + 
-  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) +
-  stat_summary(fun.y = function(x){mean(x)},
-               fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
-               fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
-               geom= 'pointrange', position = position_dodge(0.95)) +
-  labs(x = "Condition", 
-       y = "Mean Picture Valence Rating", 
-       title = 'Mean Picture Valence Across Conditions') +
-  theme_minimal()
-fig2.pic
+
 ```
 
 We chose illistrate the data with violin plots here instead of bar plots to better represent the distribution.
@@ -210,6 +198,22 @@ arous.by.color <- ggplot(data= color_data_pr, aes(x=color, y= Pic_valence_MEAN, 
        x = 'Picture Color') + 
   theme_minimal()
 arous.by.color
+
+
+
+# Figure 2, grouped by image type rather than colour 
+fig2.pic <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
+  geom_bar(stat="summary", fun.y="mean", position="dodge") + 
+  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) +
+  stat_summary(fun.y = function(x){mean(x)},
+               fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
+               fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
+               geom= 'pointrange', position = position_dodge(0.95)) +
+  labs(x = "Condition", 
+       y = "Mean Picture Valence Rating", 
+       title = 'Mean Picture Valence Across Conditions') +
+  theme_minimal()
+fig2.pic
 
 # one-way ANOVA of colour
 
@@ -316,6 +320,10 @@ Even after removing the data collected from first picture ratings, we find that 
 
 ### Potential Confounds from Subject Anxiety
 __Effects of Test Anxiety and General Anxiety on Arousal and Valence Ratings__
+
+## Valence ANCOVAS
+
+A two-way ANCOVA was conducted with valence ratings as the response variable and colour and context as predictors, whilst controlling for trait anxiety.
 ``` {r some ancovas}
 
 # ANCOVA with valence rating as the response variable, trait anxiety as control
@@ -325,7 +333,12 @@ ancova.val.trait_anxiety1
 
 ancova.val.trait_anxiety2 = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ STAI_MEAN + pic*color))
 ancova.val.trait_anxiety2
-
+```
+ There was a significant difference in valence rating with context added to the model (F(1,298)=367.25, p < 0.001). When colour was added to the model with trait anxiety controlled, there was a significant main effect (F(1,298)=4.8684, p = 0.028115). There was an interaction effect of colour and context (F(1,298)= 4.7427, p = 0.030206).  
+ 
+ 
+Next, two-way ANCOVA was conducted with valence ratings as the response variable and colour and context as predictors, whilst controlling for test anxiety. 
+```{r}
 # ANCOVA with valence rating as the response variable, test anxiety as control
 
 ancova.val.test_anxiety1 = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ AEQanxiety_MEAN + color*pic))
@@ -333,7 +346,13 @@ ancova.val.test_anxiety1
 
 ancova.val.test_anxiety2 = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ AEQanxiety_MEAN + pic*color))
 ancova.val.test_anxiety2 
+```
+There was a significant difference in valence rating with context added to the model (F(1,300)=355.78, p < 0.001). When colour was added to the model with test anxiety controlled, there was no longer a significant main effect for colour (F(1,300)=2.0191, p = 0.15637). There was no interaction effect of colour and context (F(1,300)= 3.1719, p = 0.07593). 
 
+
+## Arousal ANCOVAS
+A two-way ANCOVA was conducted with arousal ratings as the response variable and colour and context as predictors, whilst controlling for trait anxiety. 
+```{r}
 # ANCOVA with arousal rating as the response variable, trait anxiety as control
 
 ancova.aro.trait_anxiety1 = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ STAI_MEAN + color*pic))
@@ -341,7 +360,13 @@ ancova.aro.trait_anxiety1
 
 ancova.aro.trait_anxiety2 = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ STAI_MEAN + pic*color))
 ancova.aro.trait_anxiety2
+```
+There was a significant difference in arousal rating with context added to the model (F(1,298)=126.766, p < 0.001). When colour was added to the model with trait anxiety controlled, there was a significant main effect (F(1,298)=3.3886, p = 0.06664). There was no interaction effect of colour and context (F(1,298) = 1.5045, p =0.220951).  
 
+
+A two-way ANCOVA was conducted with arousal ratings as the response variable and colour and context as predictors, whilst controlling for test anxiety. 
+
+```{r}
 # ANCOVA with arousal rating as the response variable, test anxiety as control
 
 ancova.aro.test_anxiety1 = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ AEQanxiety_MEAN + color*pic))
@@ -351,23 +376,59 @@ ancova.aro.test_anxiety2 = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ AEQ
 ancova.aro.test_anxiety2
 
 ```
-A two-way ANCOVA was conducted with valence ratings as the response variable and colour and context as predictors, whilst controlling for trait anxiety. There was a significant difference in valence rating with context added to the model (F(1,298)=367.25, p < 0.001). When colour was added to the model with trait anxiety controlled, there was a significant main effect (F(1,298)=4.8684, p = 0.028115). There was an interaction effect of colour and context (F(1,298)= 4.7427, p = 0.030206).
 
-A two-way ANCOVA was conducted with valence ratings as the response variable and colour and context as predictors, whilst controlling for test anxiety. There was a significant difference in valence rating with context added to the model (F(1,300)=355.78, p < 0.001). When colour was added to the model with test anxiety controlled, there was no longer a significant main effect for colour (F(1,300)=2.0191, p = 0.15637). There was no interaction effect of colour and context (F(1,300)= 3.1719, p = 0.07593). 
+There was a significant difference in valence rating with context added to the model (F(1,300)=128.69, p < 0.001). When colour was added to the model with trait anxiety controlled, there was a significant main effect (F(1,300)=1.3319, p = 0.2494). There was no interaction effect of colour and context (F(1,300) = 0.5575, p = 0.4559).   
 
-A two-way ANCOVA was conducted with arousal ratings as the response variable and colour and context as predictors, whilst controlling for trait anxiety. There was a significant difference in valence rating with context added to the model (F(1,298)=126.766, p < 0.001). When colour was added to the model with trait anxiety controlled, there was a significant main effect (F(1,298)=3.3886, p = 0.06664). There was no interaction effect of colour and context (F(1,298) = 1.5045, p =0.220951).
 
-A two-way ANCOVA was conducted with arousal ratings as the response variable and colour and context as predictors, whilst controlling for test anxiety. There was a significant difference in valence rating with context added to the model (F(1,300)=128.69, p < 0.001). When colour was added to the model with trait anxiety controlled, there was a significant main effect (F(1,300)=1.3319, p = 0.2494). There was no interaction effect of colour and context (F(1,300) = 0.5575, p = 0.4559). 
+In the paper, the authors state that they performed supplementary analyses controlling for both trait and test anxiety, and that the tests showed that anxiety did not substantially moderate the interaction effect on valence reported above. We confirmed this for trait anxiety, but not for test anxiety. They did not report the results of an ANCOVA of arousal ratings with anxiety as a covariate.
 
-The authors state that they performed supplementary analyses controlling for both trait and test anxiety,and that the tests showed that anxiety did not substantially moderate the interaction effect on valence reported above. We confirmed this for trait anxiety, but not for test anxiety. They did not report the results of an ANCOVA of arousal ratings with anxiety as a covariate.
-```{r}
+### Anxiety Interaction Graphs
+```{r, warning=FALSE, message=FALSE}
 
-# Plot: interaction between Condition and Trait anxiety
-anxiety.interaction <- color_data_pr %>% 
+# anova: interaction between color and Trait anxiety
+summary(aov(Pic_arousal_MEAN ~ color * STAI_MEAN, data=color_data_pr))
+
+# Plot: interaction between color and Trait anxiety
+trait.anxiety.interaction <- color_data_pr %>% 
   ggplot() +
-  aes(x = AEQanxiety_MEAN, color = Condition, group = Condition, y = Pic_arousal_MEAN) +
-  stat_summary(fun.y = mean, geom = "point") +
-  stat_summary(fun.y = mean, geom = "line")+ ggtitle('Condition and Anxiety Interaction')
-anxiety.interaction
+  aes(x = STAI_MEAN, color = color, group = color, y = Pic_arousal_MEAN) +
+  stat_summary(fun.y = mean, geom = "line")+ ggtitle('Color and Trait Anxiety Interaction')
+trait.anxiety.interaction
+
+
+# anova: interaction between context and Trait anxiety
+summary(aov(Pic_arousal_MEAN ~ pic * STAI_MEAN, data=color_data_pr))
+# Plot: interaction between context and Trait anxiety
+context.traitAnx.interact<- color_data_pr %>% 
+  ggplot() +
+  aes(x = STAI_MEAN, color = pic, group = pic, y = Pic_arousal_MEAN) +
+  stat_summary(fun.y = mean, geom = "line")+ ggtitle('Context and Trait Anxiety Interaction')
+context.traitAnx.interact
+
+
+# anova: interaction between color and Test anxiety
+summary(aov(Pic_arousal_MEAN ~ color * AEQanxiety_MEAN, data=color_data_pr))
+# Plot: interaction between color and Test anxiety
+color.testAnx.interact <- color_data_pr %>% 
+  ggplot() +
+  aes(x = AEQanxiety_MEAN, color = color, group = color, y = Pic_arousal_MEAN) +
+  stat_summary(fun.y = mean, geom = "line")+ 
+  ggtitle('Color and Test Anxiety Interaction')
+
+color.testAnx.interact
+
+
+# anova: interaction between context and Test anxiety
+summary(aov(Pic_arousal_MEAN ~ pic * AEQanxiety_MEAN, data=color_data_pr))
+# Plot: interaction between context and Test anxiety
+context.testAnx.interact<- color_data_pr %>% 
+  ggplot() +
+  aes(x = AEQanxiety_MEAN, color = pic, group = pic, y = Pic_arousal_MEAN) +
+  stat_summary(fun.y = mean, geom = "line")+ ggtitle('Context and Test Anxiety Interaction')
+context.testAnx.interact
+
 
 ```
+
+```
+There is an interaction between 
