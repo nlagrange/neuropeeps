@@ -78,15 +78,15 @@ fig.pic <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill = pic)) +
        x = 'Image Type')+ 
   theme_minimal()
 fig.pic
+
+
 ```
 
 
 
 
-
-
 ```{r}
-# Figure 2 recreated
+# Figure 2 replicated
 
 fig2 <- ggplot(color_data_pr, aes(x=Condition, Pic_valence_MEAN, fill = Condition)) +
   geom_bar(stat='summary', fun.y='mean') +
@@ -124,18 +124,14 @@ Note, the F-statistic for main effect of __context__ (F(1,301) = 323.59, p < 0.0
 
 Note, the F-statistic for main effect of __color__ (F(1,301) = 5.345, p = 0.02) slightly differs from the reported one (F(1,301) = 5.40, p = 0.02).
 
+__Sheffe Post Hoc Test for multiple comparisons.__
+```{r, Sheffe}
+# scheffe Post Hoc Test Replication
+(schef <- PostHocTest(x=interact.val.color, method="scheffe"))
 
+```
+The authors chose to report the results for the comparison between the test:red interaction and the test:blue interaction __(diff 0.491, p = 0.0257)__, in order to support the claim that the color red enhances valence perceptions. This, by itself, does not seem to support that particular claim. It does suggest that there is a slight bias for individuals to perceive an affectively charged context as unpleasant if red is present, rather than blue. Another test may be to evaluate whether the test:blue - neu:blue comparison __(diff 1.805, p < 0.001)__ is significantly different from test:red - neu:red __(diff 2.263, p < 0.001)__.  
 ```{r}
-
- ggplot(color_data_pr, aes(x=Condition, Pic_arousal_MEAN)) +
-  geom_bar(stat="summary", fun.y="mean", position="dodge") +
-  stat_summary(fun.y = function(x){mean(x)},
-               fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
-               fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
-               geom= 'pointrange') +
-  labs(x = "Condition", y = "Mean Picture Arousal Rating", title = 'Mean Picture Arousal Across Conditions') + 
-  theme_minimal()
-
 
 arous.neu.vs.test <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
   geom_bar(stat="summary", fun.y="mean", position="dodge", width = 0.5) + 
@@ -247,14 +243,6 @@ anova.aro.cond = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ Condition))
 
 interact.val.cond = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ Condition*Pic_arousal_MEAN))
 interact.aro.cond = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ Condition*Pic_valence_MEAN))
-```
-
-__Sheffe__
-```{r, Sheffe}
-
-#recreate their scheffe
-schef <- PostHocTest(x=interact.val.color, method="scheffe")
-
 ```
 
 __some ANCOVAs.__
