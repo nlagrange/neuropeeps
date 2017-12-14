@@ -144,33 +144,6 @@ ggplot(color_data_pr, aes(x=pic, Pic_valence_MEAN, fill=color)) +
   stat_summary(fun.data = mean_se, geom = 'pointrange', color='black', size = 0.2, position = position_dodge(.9)) +
   theme_minimal()
 
-# bar or violin plots for the distribution of arousal and valence judgements for each picture
-arousal_by_pic = c(mean(color_data_pr$pic1_arousal), 
-                   mean(color_data_pr$pic2_arousal), 
-                   mean(color_data_pr$pic3_arousal), 
-                   mean(color_data_pr$pic4_arousal))
-
-valence_by_pic = c(mean(color_data_pr$pic1_valence), mean(color_data_pr$pic2_valence), mean(color_data_pr$pic3_valence), mean(color_data_pr$pic4_valence))
-
-pics = c('pic1', 'pic2', 'pic3', 'pic4','pic1', 'pic2', 'pic3', 'pic4')
-new.df = data.frame(arousal_by_pic, valence_by_pic, pics)
-
-labels = c('arousal', 'arousal', 'arousal', 'arousal',
-           'valence', 'valence', 'valence', 'valence')
-
-ratings = c(arousal_by_pic, valence_by_pic)
-new.df2 = data.frame(ratings, pics, labels)
-
-ggplot(new.df2, aes(x=pics, ratings, fill=labels)) +
-  geom_bar(stat="identity", position="dodge") + 
-  labs(title = 'Mean Picture Arousal Across Pictures') + 
-  theme_minimal()
-
-# try this for the error bars
-stat_summary (fun.y = function(x){mean(x)},
-                fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
-                fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
-                geom= 'pointrange')
 ```
 
 __some ANOVAs.__ 
@@ -203,140 +176,12 @@ ancova.val.test_anxiety = anova(lm(data = color_data_pr, Pic_valence_MEAN ~ AEQa
 ancova.aro.trait_anxiety = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ STAI_MEAN + Condition))
 ancova.aro.test_anxiety = anova(lm(data = color_data_pr, Pic_arousal_MEAN ~ AEQanxiety_MEAN + Condition))
 
-```
-
-__Tania messing around to understand the data/feel free to ignore.__
-```{r Tania messing around with things to understand the data better, enter at your own risk}
-
-## First let's create a simpler dataframe to work with
-
-simple.color.df <- data.frame(condition=color_data_pr$Condition,pic1_valence=color_data_pr$pic1_valence,pic2_valence=color_data_pr$pic2_valence,pic3_valence=color_data_pr$pic3_valence,pic4_valence=color_data_pr$pic4_valence,pic1_arousal=color_data_pr$pic1_arousal,pic2_arousal=color_data_pr$pic2_arousal,pic3_arousal=color_data_pr$pic3_arousal,pic4_arousal=color_data_pr$pic4_arousal,test.anxiety=color_data_pr$STAI_MEAN,trait.anxiety=color_data_pr$AEQanxiety_MEAN)
-
-## Let's look at the data by image and condition
-
-# Red and Neutral condition
-red.neu = filter(simple.color.df, condition=='red_neu')
-
-# Red/neutral valence ratings
-means.val.red.neu = c(mean(red.neu$pic1_valence),
-                     mean(red.neu$pic2_valence),
-                     mean(red.neu$pic3_valence),
-                     mean(red.neu$pic4_valence))
-
-pic1.val.mean.rn = means.val.red.neu[1]
-pic2.val.mean.rn = means.val.red.neu[2]
-pic3.val.mean.rn = means.val.red.neu[3]
-pic4.val.mean.rn = means.val.red.neu[4]
-
-val.red.neu.avg = mean(c(mean(red.neu$pic1_valence),
-                     mean(red.neu$pic2_valence),
-                     mean(red.neu$pic3_valence),
-                     mean(red.neu$pic4_valence)))
-
-# Red/neutral arousal ratings
-means.aro.red.neu = c(mean(red.neu$pic1_arousal),
-                     mean(red.neu$pic2_arousal),
-                     mean(red.neu$pic3_arousal),
-                     mean(red.neu$pic4_arousal))
-
-pic1.aro.mean.rn = means.aro.red.neu[1]
-pic2.aro.mean.rn = means.aro.red.neu[2]
-pic3.aro.mean.rn = means.aro.red.neu[3]
-pic4.aro.mean.rn = means.aro.red.neu[4]
-
-aro.red.neu.avg = mean(c(mean(red.neu$pic1_arousal),
-                     mean(red.neu$pic2_arousal),
-                     mean(red.neu$pic3_arousal),
-                     mean(red.neu$pic4_arousal)))
-
-# Red/test condition
-
-red.test = filter(simple.color.df, condition=='red_test')
-
-# Red/test valence ratings
-means.val.red.test = c(mean(red.test$pic1_valence),
-                     mean(red.test$pic2_valence),
-                     mean(red.test$pic3_valence),
-                     mean(red.test$pic4_valence))
-
-pic1.val.mean.rt = means.val.red.test[1]
-pic2.val.mean.rt = means.val.red.test[2]
-pic3.val.mean.rt = means.val.red.test[3]
-pic4.val.mean.rt = means.val.red.test[4]
-
-val.red.test.avg = mean(c(mean(red.test$pic1_valence),
-                     mean(red.test$pic2_valence),
-                     mean(red.test$pic3_valence),
-                     mean(red.test$pic4_valence)))
-
-# Red/test arousal ratings
-means.aro.red.test = c(mean(red.test$pic1_arousal),
-                     mean(red.test$pic2_arousal),
-                     mean(red.test$pic3_arousal),
-                     mean(red.test$pic4_arousal))
-
-pic1.aro.mean.rt = means.aro.red.test[1]
-pic2.aro.mean.rt = means.aro.red.test[2]
-pic3.aro.mean.rt = means.aro.red.test[3]
-pic4.aro.mean.rt = means.aro.red.test[4]
-
-aro.red.test.avg = mean(c(mean(red.test$pic1_arousal),
-                     mean(red.test$pic2_arousal),
-                     mean(red.test$pic3_arousal),
-                     mean(red.test$pic4_arousal)))
-
-# Blue/neutral condition
-blue.neu = filter(simple.color.df, condition=='blue_neu')
-
-# blue/neutral valence ratings
-
-```
-
-
-
-```{r}
-#recreate their anovas
-
-
-
-
-
-
-
-
-
-#recreate their scheffe
-
-schef <- PostHocTest(x=interact.val.color, method="scheffe")
-
-
-
-
-
-
-
-# Nicole mucking about. Ingnore this.
-
-
-## this is unnecessary
-red <- color_data_pr %>% filter(color=='red')
-blue <- color_data_pr %>% filter(color=='blue')
-test <- color_data_pr %>% filter(pic=='test')
-neu <- color_data_pr %>% filter(pic=='neu')
-
-summary(aov(data= color_data_pr, Pic_arousal_MEAN ~ color*pic))
-#recreate their scheffe
-
-
-summary(aov(data= color_data_pr, Pic_arousal_MEAN ~ pic))
-
-
+# Nicole's anxiety versions
 # Anova of picture arousal as a function of conditon controling for anxiety levels.
 anova(lm(data=color_data_pr, Pic_arousal_MEAN ~ AEQanxiety_MEAN + Condition))
 
 #interactions between sex and Anxiety for Arousal ratings
 anova(lm(data=color_data_pr, Pic_arousal_MEAN ~ AEQanxiety_MEAN * Condition))
-
 
 
 # There is an interaction between Condition and Anxiety
@@ -347,6 +192,14 @@ color_data_pr %>%
   stat_summary(fun.y = mean, geom = "point") +
   stat_summary(fun.y = mean, geom = "line")+ ggtitle('Condition and Anxiety Interaction')
 
+
+```
+
+
+```{r}
+#recreate their scheffe
+
+schef <- PostHocTest(x=interact.val.color, method="scheffe")
 
 
 ```
