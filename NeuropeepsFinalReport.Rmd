@@ -431,4 +431,4 @@ context.testAnx.interact
 ```
 
 ```
-There is an interaction between 
+There is no interaction for the first three graphs. However the last one shows that there is a strong interaction between Test anxiety and context. F(1,301) = 19.69 p < .001
