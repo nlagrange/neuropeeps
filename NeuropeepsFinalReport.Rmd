@@ -4,8 +4,8 @@ title: 'Not Always A Matter Of Context: direct effects of red on arousal but con
 author: "Nicole LaGrange, Tania Delgado, Pamela Riviere"
 date: '2017-12-14'
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ####### __Paper.__ Buechner and Maier (2016) Not always a matter of context: direct effects of red on arousal but context-dependent moderations on valence. _PeerJ_
@@ -184,62 +184,6 @@ In conlcustion, valence ratings were  larger in the test condition, which is to 
 
 
 
-##__more graphs. are theese necessary?__
-```{r}
-
-# Mean Valence rating by colour, collapsed across image type
-arous.by.color <- ggplot(data= color_data_pr, aes(x=color, y= Pic_valence_MEAN, fill=color)) + 
-  geom_bar(stat="summary", fun.y="mean", position="dodge") +
-  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) +
-  stat_summary(fun.y = function(x){mean(x)},
-               fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
-               fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
-               geom= 'pointrange') +
-  labs(title = 'Mean Valence Rating for Blue v. Red Pictures', 
-       y = 'Mean Picture Valence Rating', 
-       x = 'Picture Color') + 
-  theme_minimal()
-arous.by.color
-
-
-
-# Figure 2, grouped by image type rather than colour 
-fig2.pic <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
-  geom_bar(stat="summary", fun.y="mean", position="dodge") + 
-  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1)) +
-  stat_summary(fun.y = function(x){mean(x)},
-               fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
-               fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
-               geom= 'pointrange', position = position_dodge(0.95)) +
-  labs(x = "Condition", 
-       y = "Mean Picture Valence Rating", 
-       title = 'Mean Picture Valence Across Conditions') +
-  theme_minimal()
-fig2.pic
-
-# one-way ANOVA of colour
-
-summary(aov(data = color_data_pr, Pic_valence_MEAN ~ color))
-```
-
-```{r}
-
-# Similar to Figure 2: arousal ratings grouped by image type  
-
-arous.neu.vs.test <- ggplot(color_data_pr, aes(x=pic, Pic_arousal_MEAN, fill=color)) +
-  geom_bar(stat="summary", fun.y="mean", position="dodge", width = 0.5) + 
-  scale_fill_manual(values = alpha(c("deepskyblue", "indianred"), 1))+
-  stat_summary(fun.y = function(x){mean(x)},
-               fun.ymin = function(x){mean(x) - 2*sd(x)/sqrt(length(x))},
-               fun.ymax = function(x){mean(x) + 2*sd(x)/sqrt(length(x))},
-               geom= 'pointrange', position = position_dodge(0.5)) +
-  labs(title = 'Mean Arousal Rating for Neutral v. Test Pictures', 
-       y = 'Mean Picture Arousal Rating', 
-       x = 'Picture Type') + 
-  theme_minimal()
-arous.neu.vs.test
-
-```
 
 ### Post Hoc Test
 __Sheffe Post Hoc Test for multiple comparisons.__
@@ -441,10 +385,32 @@ context.testAnx.interact
 There is no interaction for the first three graphs. However the last one shows that there is a strong interaction between Test anxiety and context. F(1,301) = 19.69 p < .001
 
 
-However, when controling for Test anxiety
 ```{r}
 # controling for test anxiety on context.
 
 summary(aov(Pic_arousal_MEAN ~ STAI_MEAN + pic, data=color_data_pr))
 
 ```
+However, when controling for Test anxiety, context was still significant. F(1,300) = 124 p<.001
+
+```{r}
+### How about for Valence
+# anova: interaction between color and Trait anxiety
+summary(aov(Pic_valence_MEAN ~ color * STAI_MEAN, data=color_data_pr))
+# anova: interaction between context and Trait anxiety
+summary(aov(Pic_valence_MEAN ~ pic * STAI_MEAN, data=color_data_pr))
+# anova: interaction between color and Test anxiety
+summary(aov(Pic_valence_MEAN ~ color * AEQanxiety_MEAN, data=color_data_pr))
+# anova: interaction between context and Test anxiety
+summary(aov(Pic_valence_MEAN ~ pic * AEQanxiety_MEAN, data=color_data_pr))
+```
+There is a strong interaction between Test anxiety and Context. F(1,301)=22.01 p<.001.
+
+Lets do an ANCOVA to look for the effects of context after test anxiety is acounted for.
+```{r}
+summary(aov(Pic_valence_MEAN ~ AEQanxiety_MEAN + pic, data=color_data_pr))
+```
+The effect of context on valence is still significant. F(1,302) = 350, P < .001
+
+
+
